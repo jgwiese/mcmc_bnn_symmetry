@@ -5,7 +5,10 @@ from transformation.quadratic_bezier_path import QuadraticBezierPath
 from transformation.linear import Linear
 from transformation.linear_log import LinearLog
 from transformation.identity import Identity
-from transformation.sequential import Sequential
+#from transformation.sequential import Sequential
+from transformation.sequential_flax import Sequential
 from transformation.constant import Constant
 from transformation.definitions import ActivationType, ACTIVATION_FUNCTIONS
 from transformation.activation import Activation
+from transformation.mlp import MLP
+

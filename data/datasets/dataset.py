@@ -19,9 +19,9 @@ class Dataset(ABC):
         else:
             pass
     
-    def split(self, rnd_key, ratio):
+    def split(self, rng_key, ratio):
         assert ratio >= 0.0 and ratio <= 1.0
-        data_shuffled = jax.random.permutation(rnd_key, self._data, axis=0)
+        data_shuffled = jax.random.permutation(rng_key, self._data, axis=0)
         data_train = data_shuffled[:int(ratio * len(data_shuffled))].clone()
         data_validate = data_shuffled[int(ratio * len(data_shuffled)):].clone()
         
@@ -29,7 +29,7 @@ class Dataset(ABC):
         if self._normalization == "standardization":
             data_train = self._mean + self._std * data_train
             data_validate = self._mean + self._std * data_validate
-        elif normalization == "none":
+        elif self._normalization == "none":
             pass
         else:
             pass

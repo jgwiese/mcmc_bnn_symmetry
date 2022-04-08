@@ -16,7 +16,11 @@ class Sinusoidal(Dataset):
 
     def __getitem__(self, index):
         sample = self._data[index]
-        return jnp.expand_dims(sample.T[0], -1), jnp.expand_dims(sample.T[1], -1)
+        conditional = sample[..., :1]
+        dependent = sample[..., 1:]
+        return conditional, dependent
+        #sample = self._data[index]
+        #return sample[:, :1], sample[:, 1:]
 
     def __len__(self):
         return len(self._data)

@@ -1,5 +1,5 @@
 from transformation import AbstractTransformation
-import jax.numpy as jnp
+import torch
 
 
 class Linear(AbstractTransformation):
@@ -16,11 +16,11 @@ class Linear(AbstractTransformation):
         )
 
     def forward(self, inputs, parameters, *args, **kwargs):
-        w = parameters[:self.domain * self.image].reshape((self.image, self.domain))
-        result = jnp.matmul(inputs, w)
+        w = parameters[:self.domain * self.image].reshape((self.image, self.domain)).T
+        result = torch.matmul(inputs, w)
         if self._bias:
             b = parameters[-self.image:]
-            result = jnp.add(result, b)
+            result = torch.add(result, b)
         return result
     
     @property

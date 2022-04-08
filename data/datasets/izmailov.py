@@ -10,7 +10,9 @@ class Izmailov(Dataset):
     
     def __getitem__(self, index):
         sample = self._data[index]
-        return sample[:, :1], sample[:, 1:]
+        conditional = sample[..., :1]
+        dependent = sample[..., 1:]
+        return conditional, dependent
 
     def __len__(self):
         return len(self._data)
