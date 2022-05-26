@@ -6,20 +6,27 @@ from typing import Dict
 
 
 class Regression:
-    def __init__(self, transformation, parameters_prior, data_std_prior, outputs_likelihood):
+    def __init__(self, transformation, dataset):
         self._transformation = transformation
-        self._parameters_prior = parameters_prior
-        self._data_std_prior = data_std_prior
-        self._outputs_likelihood = outputs_likelihood
+        parameters_size = transformation.parameters_size(dataset[0][0])
+        #self._parameters_prior = distributions.MultivariateNormal(
+        #    jnp.zeros(parameters_size),
+        #    jnp.eye(parameters_size)
+        #)
+        self._parameters_prior = distributions.Normal(
+            jnp.zeros(parameters_size),
+            jnp.ones(parameters_size)
+        )
+        self._data_std_prior = distributions.HalfNormal(jnp.ones(1))
+        self._outputs_likelihood = distributions.Normal
+        self._dataset = dataset
     
-    def sample(self, pm_parameters):
-        #inputs = parameters["inputs"]
-        #outputs = parameters["outputs"]
-        inputs = pm_parameters[:, 0][:, jnp.newaxis]
-        outputs = pm_parameters[:, 1][:, jnp.newaxis]
+    def __call__(self):
+        inputs = self._dataset.data[:, self._dataset.conditional_indices]
+        outputs = self._dataset.data[:, self._dataset.dependent_indices]
         parameters = numpyro.sample("parameters", self._parameters_prior)
         means = self._transformation.apply_from_vector(inputs=inputs, parameters_vector=parameters)
-        std = numpyro.sample("log_std", self._data_std_prior)
+        std = numpyro.sample("std", self._data_std_prior)
         
         with numpyro.plate("data", size=inputs.shape[0], dim=-2):
             return numpyro.sample("outputs", self._outputs_likelihood(means, std), obs=outputs)

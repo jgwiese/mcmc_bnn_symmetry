@@ -6,6 +6,8 @@ import numpyro
 import numpyro.distributions as distributions
 import math
 from tqdm import tqdm
+from multiprocessing import Pool
+import os
 
 
 def run(rng_key, prob_model, data, num_warmup, num_samples_total, num_chains, progress_bar=False):
@@ -27,19 +29,17 @@ def run(rng_key, prob_model, data, num_warmup, num_samples_total, num_chains, pr
     mcmc = numpyro.infer.MCMC(
         kernel,
         num_warmup=num_warmup,
-        num_samples=num_samples_chain,
+        num_samples=num_samples_chain * parallel_chains,
         num_chains=parallel_chains,
         progress_bar=progress_bar,
-        #chain_method="sequential"
     )
-
-    #for run in tqdm(range(num_runs)):
-    for run in range(num_runs):
+    
+    for run in tqdm(range(num_runs)):
         rng_key, rng_key_ = jax.random.split(rng_key)
         start = time.time()
         mcmc.run(rng_key_, data)
         end = time.time()
-        print(run, "run duration:", end - start)
+        #print(run, "run duration:", end - start)
 
         # concatenate samples
         run_samples = mcmc.get_samples()
@@ -50,3 +50,4 @@ def run(rng_key, prob_model, data, num_warmup, num_samples_total, num_chains, pr
                 samples[key] = jnp.concatenate([samples[key], run_samples[key]], axis=0)
 
     return samples
+

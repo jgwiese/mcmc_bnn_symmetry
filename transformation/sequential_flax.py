@@ -16,7 +16,7 @@ class Sequential(Module):
         for layer in self.layers[1:]:
             outputs = layer(outputs)
         return outputs
-
+    
     def parameters_size(self, inputs):
         parameters = self.init(jax.random.PRNGKey(0), inputs)
         leaves, treedef = tree_flatten(parameters)

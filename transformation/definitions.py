@@ -2,6 +2,24 @@ from enum import Enum
 from typing import Dict, Any
 from transformation import Identity
 import torch
+import utils
+import flax.linen as nn
+import transformation
+
+
+def create_model_transformation(settings: utils.SettingsExperiment, dataset):
+    layers = []
+    for l in range(settings.hidden_layers):
+        layers.append(nn.Dense(settings.hidden_neurons))
+        if settings.activation == "tanh":
+            layers.append(nn.tanh)
+    
+    layers.append(nn.Dense(len(dataset.dependent_indices)))
+    if settings.activation_last_layer == "tanh":
+        layers.append(nn.tanh)
+    
+    model_transformation = transformation.Sequential(layers)
+    return model_transformation
 
 
 class ActivationType(Enum):

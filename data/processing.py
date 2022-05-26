@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 
 
-def scale(data, scale, shift):
+def shift_scale(data, scale, shift):
     return (data - shift) / scale
 
 

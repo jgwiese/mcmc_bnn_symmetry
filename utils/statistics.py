@@ -2,7 +2,7 @@ import jax.numpy as jnp
 
 
 def expected_number_of_chains(n):
-    """ Coupon collector's problem. For large n I should use the approximation. """
+    """ Coupon collector's problem. For large n I should use the approximation. Each ticket of the n tickets has the same probability. """
     harmonics = jnp.sum(1.0 / jnp.arange(1, n + 1))
     return n * harmonics
 
