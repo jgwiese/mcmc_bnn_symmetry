@@ -56,4 +56,3 @@ class RegressionFigure:
     
     def save(self, path):
         self._figure.savefig(path, bbox_inches="tight")
-

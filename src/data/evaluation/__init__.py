@@ -1,1 +1,1 @@
-from data.evaluation.rmse import rmse
+from .rmse import rmse
