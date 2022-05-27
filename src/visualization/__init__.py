@@ -1,5 +1,7 @@
-from visualization.triangle_figure import TriangleFigure, BivariatePlot, PlotSettings, ScatterSettings, TriangleSettings
-from visualization.regression_figure import RegressionFigure, RegressionSettings, TransformationPlotSettings, DataPlotSettings
-from visualization.speed_comparison_figure import SpeedComparisonFigure, SpeedComparisonSettings
-from visualization.trace_figure import TraceFigure, TraceSettings
+from .regression_figure import RegressionFigure
+from .data_plot import DataPlot
+from .transformation_plot import TransformationPlot
+from .triangle_figure import TriangleFigure, BivariatePlot
+from .speed_comparison_figure import SpeedComparisonFigure, SpeedComparisonSettings
+from .trace_figure import TraceFigure, TraceSettings
 

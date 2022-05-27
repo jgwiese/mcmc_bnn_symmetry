@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import copy
 from typing import Any
 import numpy as np
@@ -6,87 +5,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
-
-
-@dataclass
-class PlotSettings:
-    xlim: Any = np.array([-1.0, 1.0])
-    ylim: Any = np.array([-1.0, 1.0])
-    aspect: str = "equal"
-    color: str = "black"
-    alpha: float = 1.0
-    linewidth: float = 1.0
-
-
-@dataclass
-class ScatterSettings:
-    xlim: Any = np.array([-1.0, 1.0])
-    ylim: Any = np.array([-1.0, 1.0])
-    aspect: str = "equal"
-    alpha: float = 1.0
-    size: float = 1.0
-    marker: str = "."
-
-
-@dataclass
-class TriangleSettings:
-    plot_settings: PlotSettings = PlotSettings()
-    scatter_settings: ScatterSettings = ScatterSettings()
-    ax_width: float = np.sqrt(2.0)
-    ax_height: float = np.sqrt(2.0)
-    prefix: str = r"\theta"
-    univariate: bool = True
-    shift: bool = False
-    cmap: matplotlib.colors.Colormap = matplotlib.cm.get_cmap("gist_rainbow") # "jet"
-
-
-class UnivariatePlot:
-    def __init__(self, ax, scale, shift, settings: PlotSettings):
-        self._ax = ax
-        self._scale = scale
-        self._shift = shift
-        self._settings = settings
-    
-    def plot(self, data, color):
-        sns.kdeplot(x=data, ax=self._ax, fill=False, color=color, alpha=self._settings.alpha, linewidth=1.0, warn_singular=False)
-        self._ax.set_xlim(self._settings.xlim * self._scale + self._shift)
-        self._ax.set_ylabel("")
-        self._ax.tick_params(direction="in")
-
-
-class BivariatePlot:
-    def __init__(self, ax, scale, shift, settings: ScatterSettings):
-        self._ax = ax
-        self._scale = scale
-        self._shift = shift
-        self._settings = settings
-    
-    def plot(self, data, color, size=None, adjacency_matrix=None):
-        if size is None:
-            size = self._settings.size
-        
-        self._ax.grid(visible=True)
-        self._ax.scatter(data[0], data[1], s=size, alpha=self._settings.alpha, color=color, marker=self._settings.marker)
-        self._ax.set_xlim(self._settings.xlim * self._scale + self._shift[0])
-        self._ax.set_ylim(self._settings.ylim * self._scale + self._shift[1])
-        self._ax.set_aspect(self._settings.aspect)
-        self._ax.tick_params(direction="in")
-        
-        if adjacency_matrix is not None:
-            for i, row in enumerate(range(adjacency_matrix.shape[0])):
-                for j, col in enumerate(range(adjacency_matrix.shape[1])):
-                    if j > i:
-                        if adjacency_matrix[i, j] > 0.0:
-                            line = np.stack([data[0, [i, j]], data[1, [i, j]]])
-                            self._ax.plot(
-                                line[0], line[1], color="blue", alpha=0.9
-                            )
-                        if adjacency_matrix[i, j] < 0.0:
-                            line = np.stack([data[0, [i, j]], data[1, [i, j]]])
-                            self._ax.plot(
-                                line[0], line[1], color="red", alpha=0.1
-                            )
-
 
 
 class TriangleFigure:

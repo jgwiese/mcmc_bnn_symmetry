@@ -1,13 +1,6 @@
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
-from dataclasses import dataclass
 from matplotlib import gridspec
-
-@dataclass
-class SpeedComparisonSettings:
-    sample_transformation: str = "log2"
-    time_unit: str = "ms"
-    time_transformation: str = "none"
 
 
 class SpeedComparisonFigure:
