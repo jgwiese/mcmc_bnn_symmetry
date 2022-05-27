@@ -1,5 +1,11 @@
-class TransformationPlot:
-    def __init__(self, ax, scale, settings: TransformationPlotSettings = TransformationPlotSettings()):
+from utils import settings
+import numpy as np
+import jax
+from tqdm import tqdm
+
+
+class Plot:
+    def __init__(self, ax, scale, settings: settings.SettingsPlot = settings.SettingsPlot()):
         self._ax = ax
         self._scale = scale
         self._settings = settings
@@ -11,6 +17,7 @@ class TransformationPlot:
             self._ax.set_aspect(self._settings.aspect)
             
             inputs = np.linspace(self._settings.xlim[0] * self._scale, self._settings.xlim[1] * self._scale, 128)[:, np.newaxis]
+            print(inputs.shape, parameters.shape)
             means = jax.vmap(transformation, in_axes=(None, 0))(inputs, parameters).squeeze(-1)
             for mean in tqdm(means):
                 self._ax.plot(inputs[:, 0], mean, c=color, alpha=self._settings.alpha, linewidth=self._settings.linewidth)

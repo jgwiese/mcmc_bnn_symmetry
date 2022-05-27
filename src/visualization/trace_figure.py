@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 from typing import List, Any
 from tqdm import tqdm
 import jax.numpy as jnp
+from utils import settings
 
 
 class TraceFigure:
-    def __init__(self, settings: TraceSettings = TraceSettings()):
+    def __init__(self, settings: settings.SettingsTraceFigure = settings.SettingsTraceFigure()):
         self._settings = settings
         self._figure = None
 

@@ -1,10 +1,11 @@
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+from utils import settings
 
 
 class SpeedComparisonFigure:
-    def __init__(self, settings: SpeedComparisonSettings = SpeedComparisonSettings()):
+    def __init__(self, settings: settings.SettingsSpeedComparisonFigure = settings.SettingsSpeedComparisonFigure()):
         self._settings = settings
         
         # setup sample transformation

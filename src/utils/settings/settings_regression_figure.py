@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+from utils import settings
 
 
 @dataclass
-class RegressionSettings:
-    data_plot_settings: DataPlotSettings = DataPlotSettings()
-    transformation_plot_settings: TransformationPlotSettings = TransformationPlotSettings()
+class SettingsRegressionFigure:
+    settings_scatter: settings.SettingsScatter = settings.SettingsScatter()
+    settings_plot: settings.SettingsPlot = settings.SettingsPlot()
     ax_width: float = 12.0
     ax_height: float = 4.0

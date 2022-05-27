@@ -1,5 +1,8 @@
+from utils import settings
+
+
 class UnivariateKDEPlot:
-    def __init__(self, ax, scale, shift, settings: PlotSettings):
+    def __init__(self, ax, scale, shift, settings: settings.SettingsPlot):
         self._ax = ax
         self._scale = scale
         self._shift = shift

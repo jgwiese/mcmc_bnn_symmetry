@@ -5,10 +5,12 @@ import numpy as np
 import jax
 from tqdm import tqdm
 from data.datasets import ConditionalDataset
+from utils.settings import SettingsRegressionFigure
+from visualization import Scatter, Plot
 
 
 class RegressionFigure:
-    def __init__(self, settings: RegressionSettings = RegressionSettings()):
+    def __init__(self, settings: SettingsRegressionFigure = SettingsRegressionFigure()):
         self._settings = settings
         self._figure = None
     
@@ -38,17 +40,17 @@ class RegressionFigure:
             
         if dataset is not None:
             scale = np.std(dataset.data) * 3.0
-            data_plot = DataPlot(ax, scale=scale, settings=self._settings.data_plot_settings)
+            data_plot = Scatter(ax, scale=scale, settings=self._settings.settings_scatter)
             data_plot.plot(dataset=dataset)
         if not (transformation is None or parameters_list is None or std is None):
-            transformation_plot = TransformationPlot(ax, scale=scale, settings=self._settings.transformation_plot_settings)
+            transformation_plot = Plot(ax, scale=scale, settings=self._settings.settings_plot)
             for j, parameters in enumerate(parameters_list):
                 if j > 0:
                     transformation_plot._settings.aleatoric=False
-                color = self._settings.transformation_plot_settings.cmap(1.0 * j /len(parameters_list))
+                color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
                 transformation_plot.plot(transformation, parameters, std, color=color, dataset=dataset)
             for j, parameters in enumerate(parameters_list):
-                color = self._settings.transformation_plot_settings.cmap(1.0 * j /len(parameters_list))
+                color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
                 transformation_plot.plot_means(transformation, parameters, color=color, dataset=dataset)
         return self._figure
     

@@ -1,16 +1,12 @@
-from enum import Enum
-from typing import Dict, Any
-from transformation import Identity
-import torch
 import utils
 import flax.linen as nn
-import transformation
+import transformations
 import models
 from data import datasets
+from utils import settings
 
 
-
-def create_dataset(settings: utils.SettingsExperiment):
+def create_dataset(settings: settings.SettingsExperiment):
     if settings.dataset == "izmailov":
         dataset = datasets.Izmailov(normalization=settings.dataset_normalization)
     elif settings.dataset == "sinusoidal":
@@ -27,7 +23,7 @@ def create_dataset(settings: utils.SettingsExperiment):
     return dataset
 
 
-def create_model_transformation(settings: utils.SettingsExperiment, dataset):
+def create_model_transformation(settings: settings.SettingsExperiment, dataset):
     layers = []
     for l in range(settings.hidden_layers):
         layers.append(nn.Dense(settings.hidden_neurons))
@@ -42,7 +38,7 @@ def create_model_transformation(settings: utils.SettingsExperiment, dataset):
     return model_transformation
 
 
-def create_model(settings: utils.SettingsExperiment, dataset: datasets.Dataset, model_transformation: transformation.Sequential):
+def create_model(settings: settings.SettingsExperiment, dataset: datasets.Dataset, model_transformation: transformations.Sequential):
     model = None
     if settings.dataset == "izmailov" or settings.dataset == "sinusoidal" or settings.dataset == "regression2d":
         model = models.Regression(transformation=model_transformation, dataset=dataset)

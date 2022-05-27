@@ -1,10 +1,14 @@
-class ScatterPlot:
-    def __init__(self, ax, scale, settings: DataPlotSettings = DataPlotSettings()):
+from utils import settings
+from data import datasets
+
+
+class Scatter:
+    def __init__(self, ax, scale, settings: settings.SettingsScatter = settings.SettingsScatter()):
         self._ax = ax
         self._scale = scale
         self._settings = settings
     
-    def plot(self, dataset: ConditionalDataset):
+    def plot(self, dataset: datasets.ConditionalDataset):
         conditional = dataset.data[:, dataset.conditional_indices]
         dependent = dataset.data[:, dataset.dependent_indices]
         if conditional.shape[-1] == 1:

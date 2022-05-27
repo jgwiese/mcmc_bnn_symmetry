@@ -5,10 +5,12 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
+from utils import settings
+from visualization import Scatter, UnivariateKDEPlot
 
 
 class TriangleFigure:
-    def __init__(self, settings: TriangleSettings = TriangleSettings()):
+    def __init__(self, settings: settings.SettingsTriangleFigure = settings.SettingsTriangleFigure()):
         self._settings = settings
         self.figure = None
     
@@ -41,12 +43,12 @@ class TriangleFigure:
 
                 plot = None
                 if col == row:
-                    plot = UnivariatePlot(ax, scale, shift[0], self._settings.plot_settings)
+                    plot = UnivariateKDEPlot(ax, scale, shift[0], self._settings.plot_settings)
                     for j, data in enumerate(data_list):
                         color = self._settings.cmap(1.0 * j / len(data_list))
                         plot.plot(data.T[row], color=color)
                 if col != row:
-                    plot = BivariatePlot(ax, scale, shift, self._settings.scatter_settings)
+                    plot = Scatter(ax, scale, shift, self._settings.scatter_settings)
                     for j, data in enumerate(data_list):
                         color = self._settings.cmap(1.0 * j / len(data_list))
                         if adjacency_matrix is not None and j > 0:
