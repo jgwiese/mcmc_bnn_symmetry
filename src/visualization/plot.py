@@ -11,13 +11,16 @@ class Plot:
         self._settings = settings
     
     def plot(self, transformation, parameters, std, color, dataset):
+        if std is None:
+            assert not self._settings.epistemic
+            assert not self._settings.aleatoric
+        
         if len(dataset.conditional_indices) == 1:
             self._ax.set_xlim(self._settings.xlim * self._scale)
             self._ax.set_ylim(self._settings.ylim * self._scale)
             self._ax.set_aspect(self._settings.aspect)
             
             inputs = np.linspace(self._settings.xlim[0] * self._scale, self._settings.xlim[1] * self._scale, 128)[:, np.newaxis]
-            print(inputs.shape, parameters.shape)
             means = jax.vmap(transformation, in_axes=(None, 0))(inputs, parameters).squeeze(-1)
             for mean in tqdm(means):
                 self._ax.plot(inputs[:, 0], mean, c=color, alpha=self._settings.alpha, linewidth=self._settings.linewidth)

@@ -12,18 +12,18 @@ from visualization import Scatter, UnivariateKDEPlot
 class TriangleFigure:
     def __init__(self, settings: settings.SettingsTriangleFigure = settings.SettingsTriangleFigure()):
         self._settings = settings
-        self.figure = None
+        self._figure = None
     
     def __del__(self):
-        plt.close(self.figure)
+        plt.close(self._figure)
     
     def plot(self, data_list, scale=None, sizes=None, adjacency_matrix=None):
         if sizes is not None:
             assert len(sizes) == len(data_list), "number of sizes needs to match the length of data_list"
         rows = cols = data_list[0].shape[-1]
-        if self.figure is not None:
-            self.figure.clf()
-        self.figure = plt.figure(figsize=(self._settings.ax_width * rows, self._settings.ax_height * cols))
+        if self._figure is not None:
+            self._figure.clf()
+        self._figure = plt.figure(figsize=(self._settings.ax_width * rows, self._settings.ax_height * cols))
         if scale is None:
             scale = np.std(np.concatenate(data_list, axis=0)) * 3
         if self._settings.shift:
@@ -39,7 +39,7 @@ class TriangleFigure:
                     continue
 
                 i = row * cols + col
-                ax = self.figure.add_subplot(cols, rows, i + 1)
+                ax = self._figure.add_subplot(cols, rows, i + 1)
 
                 plot = None
                 if col == row:
@@ -73,7 +73,7 @@ class TriangleFigure:
                 else:
                     ax.set_yticklabels([])
         
-        return self.figure
+        return self._figure
 
     def save(self, path):
         self.figure.savefig(path, bbox_inches="tight")
