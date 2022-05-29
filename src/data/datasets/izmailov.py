@@ -1,10 +1,12 @@
 import jax.numpy as jnp
 from data.datasets import ConditionalDataset
+import os
+import global_settings
 
 
 class Izmailov(ConditionalDataset):
     def __init__(self, normalization="standardization"):
-        data = jnp.load("/home/gw/data/datasets/izmailov_data.npy")
+        data = jnp.load(os.path.join(global_settings.PATH_DATASETS, "izmailov_data.npy"))
         super().__init__(
             data=data,
             normalization=normalization,
