@@ -15,7 +15,7 @@ from utils import settings
 
 class ExperimentSample:
     def __init__(self, settings: settings.SettingsExperimentSample):
-        self._date = datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        self._date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         self._settings = settings
         self._dataset = self._load_dataset()
         self._model_transformation = self._load_model_transformation()
