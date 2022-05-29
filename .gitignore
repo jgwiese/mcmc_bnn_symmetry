@@ -1,4 +1,4 @@
-notebooks/experiments/
+notebooks/legacy
 output/
 __pycache__/
 .ipynb_checkpoints/
