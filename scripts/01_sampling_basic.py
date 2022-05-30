@@ -50,4 +50,4 @@ if __name__ == "__main__":
                 samples[key] = jnp.concatenate([samples[key], samples_run[key]])
     experiment._samples = samples
 
-    file_name = experiment.save()
+    print(f"saved as {experiment.save()}")
