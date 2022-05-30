@@ -2,8 +2,13 @@ import flax.linen as nn
 import jax.numpy as jnp
 import numpy as np
 import torch
-from jax.tree_util import tree_map, tree_flatten, tree_unflatten, tree_multimap
+from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from functools import reduce
+
+
+def flax_parameters_dict_to_jax_parameter_vector(parameters_dict):
+    leaves, treedef = tree_flatten(tree_map(lambda x: x.flatten(), parameters_dict))
+    return jnp.concatenate(leaves)
 
 
 def flax_parameters_dict_to_torch_parameters_vector(parameters_dict):
@@ -12,6 +17,7 @@ def flax_parameters_dict_to_torch_parameters_vector(parameters_dict):
         torch_parameters.append(parameters_dict["params"][layer]["kernel"].flatten(order="F"))
         torch_parameters.append(parameters_dict["params"][layer]["bias"].flatten(order="F"))
     return torch.from_numpy(np.array(jnp.concatenate(torch_parameters)))
+
 
 def torch_parameters_vector_to_flax_parameters_dict(torch_parameters_vector, flax_parameters_dict_template):
     parameters_vector = jnp.array(torch_parameters_vector.detach().numpy())
@@ -25,6 +31,7 @@ def torch_parameters_vector_to_flax_parameters_dict(torch_parameters_vector, fla
         accumulator += size
     new_parameters = tree_unflatten(treedef, new_leaves)
     return new_parameters
+
 
 def torch_parameters_vector_to_flax_parameters_vector(torch_parameters_vector, flax_parameters_dict_template):
     torch_parameters_vector = jnp.array(torch_parameters_vector.detach().numpy())
@@ -42,6 +49,7 @@ def torch_parameters_vector_to_flax_parameters_vector(torch_parameters_vector, f
         
         accumulator += kernel_size + bias_size
     return jnp.array(flax_parameters_vector)
+
 
 def torch_to_flax_permutation(flax_parameters_dict_template):
     leaves, treedef = tree_flatten(flax_parameters_dict_template)
@@ -63,4 +71,3 @@ def torch_to_flax_permutation(flax_parameters_dict_template):
 
         accumulator += kernel_size + bias_size
     return permutation_indices
-    

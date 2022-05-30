@@ -1,7 +1,7 @@
 from typing import Any, Callable, Sequence
 from flax.linen.module import Module
 import jax
-from jax.tree_util import tree_map, tree_flatten, tree_unflatten, tree_multimap
+from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from functools import reduce
 
 

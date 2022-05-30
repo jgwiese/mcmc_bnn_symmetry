@@ -7,6 +7,7 @@ import seaborn as sns
 from tqdm import tqdm
 from utils import settings
 from visualization import Scatter, UnivariateKDEPlot
+from data import datasets
 
 
 class TriangleFigure:
@@ -43,13 +44,14 @@ class TriangleFigure:
 
                 plot = None
                 if col == row:
-                    plot = UnivariateKDEPlot(ax, scale, shift[0], self._settings.plot_settings)
+                    plot = UnivariateKDEPlot(ax, scale, shift[0], self._settings.settings_plot)
                     for j, data in enumerate(data_list):
                         color = self._settings.cmap(1.0 * j / len(data_list))
                         plot.plot(data.T[row], color=color)
                 if col != row:
-                    plot = Scatter(ax, scale, shift, self._settings.scatter_settings)
+                    plot = Scatter(ax, scale, shift, self._settings.settings_scatter)
                     for j, data in enumerate(data_list):
+                        dataset = datasets.ConditionalDataset(data[:, np.array([col, row])], "none", [0], [1])
                         color = self._settings.cmap(1.0 * j / len(data_list))
                         if adjacency_matrix is not None and j > 0:
                             color = self._settings.cmap(1.0 * (j - 1) / (len(data_list) - 1))
@@ -59,9 +61,9 @@ class TriangleFigure:
                         if adjacency_matrix is not None and j == 0:
                             if len(data_list) > 1:
                                 current_size = 0.0
-                            plot.plot(data.T[np.array([col, row])], color=color, size=current_size, adjacency_matrix=adjacency_matrix)
+                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=adjacency_matrix)
                         else:
-                            plot.plot(data.T[np.array([col, row])], color=color, size=current_size, adjacency_matrix=None)
+                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=None)
                 
                 # labels
                 if row == rows - 1:

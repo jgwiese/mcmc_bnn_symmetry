@@ -13,6 +13,7 @@ import jax.numpy as jnp
 class ResultSample:
     identifier: str
     date: str
+    experiment_type: str
     settings: settings.SettingsExperimentSample
     dataset: Any
     samples: Dict
@@ -25,12 +26,13 @@ class ResultSample:
 
     def _json(self):
         return {
-            "type": self.__class__.__name__,
             "identifier": self.identifier,
             "date": self.date,
+            "experiment_type": self.experiment_type,
             "settings": self.settings.__dict__,
             "dataset": "dataset.npy",
-            "samples": self._samples_file_names()
+            "samples": self._samples_file_names(),
+            "type": self.__class__.__name__,
         }
     
     def save(self):
@@ -78,7 +80,8 @@ class ResultSample:
         return ResultSample(
             identifier=result_json["identifier"],
             date=result_json["date"],
-            settings=result_json["settings"],
+            experiment_type=result_json["experiment_type"],
+            settings=settings.SettingsExperimentSample(**result_json["settings"]),
             dataset=dataset,
             samples=samples
         )

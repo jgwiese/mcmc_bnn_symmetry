@@ -40,8 +40,8 @@ class RegressionFigure:
             
         if dataset is not None:
             scale = np.std(dataset.data) * 3.0
-            data_plot = Scatter(ax, scale=scale, settings=self._settings.settings_scatter)
-            data_plot.plot(dataset=dataset)
+            scatter_plot = Scatter(ax, scale=scale, settings=self._settings.settings_scatter)
+            scatter_plot.plot(dataset=dataset)
         if not (transformation is None or parameters_list is None or std is None):
             transformation_plot = Plot(ax, scale=scale, settings=self._settings.settings_plot)
             for j, parameters in enumerate(parameters_list):

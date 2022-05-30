@@ -11,20 +11,29 @@ from utils.results import ResultSample
 import datetime
 import hashlib
 from utils import settings
+from abc import ABC, abstractmethod
+from typing import Any
 
 
-class ExperimentSample:
-    def __init__(self, settings: settings.SettingsExperimentSample):
+class AbstractExperimentSample(ABC):
+    def __init__(self, settings: settings.SettingsExperiment):
         self._date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         self._settings = settings
         self._dataset = self._load_dataset()
         self._model_transformation = self._load_model_transformation()
         self._model = self._load_model()
-        self._sample_statistics = {
-            "num_samples_per_chain": 1,
-            "num_chains": 128
-        }
+        self._sample_statistics = self._load_statistics()
         self._kernel, self._mcmc = self._load_sampler()
+    
+    @abstractmethod
+    def _load_model(self):
+        raise NotImplementedError
+    
+    def _load_statistics(self):
+        return {
+            "num_samples_per_chain": 1,
+            "num_chains": 256
+        }
     
     def _load_dataset(self):
         if self._settings.dataset == "izmailov":
@@ -46,12 +55,20 @@ class ExperimentSample:
         layers.append(nn.Dense(len(self._dataset.dependent_indices)))
         if self._settings.activation_last_layer == "tanh":
             layers.append(nn.tanh)
-        
         return transformations.Sequential(layers)
-
-    def _load_model(self):
-        if self._settings.dataset == "izmailov" or self._settings.dataset == "sinusoidal" or self._settings.dataset == "regression2d":
-            return models.Regression(transformation=self._model_transformation, dataset=self._dataset)
+    
+    @staticmethod
+    def load_model_transformation(settings: settings.SettingsExperimentSample, dataset: Any):
+        layers = []
+        for l in range(settings.hidden_layers):
+            layers.append(nn.Dense(settings.hidden_neurons))
+            if settings.activation == "tanh":
+                layers.append(nn.tanh)
+        
+        layers.append(nn.Dense(len(dataset.dependent_indices)))
+        if settings.activation_last_layer == "tanh":
+            layers.append(nn.tanh)
+        return transformations.Sequential(layers)
 
     def _load_sampler(self):
         kernel = numpyro.infer.NUTS(self._model)
@@ -59,8 +76,8 @@ class ExperimentSample:
             kernel,
             num_warmup=self._settings.num_warmup,
             num_samples=self._sample_statistics["num_samples_per_chain"],
-            num_chains = 1,
-            progress_bar = False
+            num_chains=1,
+            progress_bar=False
         )
         return kernel, mcmc
     
@@ -69,6 +86,7 @@ class ExperimentSample:
         return self._mcmc.get_samples()
     
     def run(self):
+        print("model transformation parameters {}".format(self._model_transformation.parameters_size(self._dataset[0][0])))
         samples_parallel = []
         rng_key, *sub_keys = jax.random.split(jax.random.PRNGKey(self._settings.seed), self._sample_statistics["num_chains"] + 1)
         for i in tqdm(range(self._sample_statistics["num_chains"])):
@@ -86,5 +104,12 @@ class ExperimentSample:
     def save(self):
         # gets an id
         identifier = hashlib.md5(self._date.encode("utf-8")).hexdigest()
-        result = ResultSample(identifier, self._date, self._settings, self._dataset, self._samples)
+        result = ResultSample(
+            identifier=identifier,
+            date=self._date,
+            experiment_type=self.__class__.__name__,
+            settings=self._settings,
+            dataset=self._dataset,
+            samples=self._samples
+        )
         return result.save()

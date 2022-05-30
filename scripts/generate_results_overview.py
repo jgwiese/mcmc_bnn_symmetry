@@ -30,10 +30,11 @@ def load_result(file_name):
 
 def main():
     fn_results = [os.path.join(global_settings.PATH_RESULTS, file_name) for file_name in os.listdir(global_settings.PATH_RESULTS) if os.path.isfile(os.path.join(global_settings.PATH_RESULTS, file_name)) and file_name.split('.')[-1] == "gz"]
-    csv_str = ("{}, " * 13 + "{}\n").format(
+    csv_str = ("{}; " * 15 + "{}\n").format(
         "identifier",
         "date",
-        "class_name",
+        "result_type",
+        "experiment_type",
         "dataset",
         "hidden_layers",
         "hidden_neurons",
@@ -44,26 +45,29 @@ def main():
         "statistic_p",
         "samples_per_mode",
         "identifiable_modes",
-        "seed"
+        "seed",
+        "samples_parameters_shape"
     )
     
     for fn_result in fn_results:
         result = load_result(fn_result)
-        entry = ("{}, " * 13 + "{}\n").format(
+        entry = ("{}; " * 15 + "{}\n").format(
             result.identifier,
             result.date,
             result.__class__.__name__,
-            result.settings["dataset"],
-            result.settings["hidden_layers"],
-            result.settings["hidden_neurons"],
-            result.settings["activation"],
-            result.settings["activation_last_layer"],
-            result.settings["num_warmup"],
-            result.settings["statistic"],
-            result.settings["statistic_p"],
-            result.settings["samples_per_mode"],
-            result.settings["identifiable_modes"],
-            result.settings["seed"]
+            result.experiment_type,
+            result.settings.dataset,
+            result.settings.hidden_layers,
+            result.settings.hidden_neurons,
+            result.settings.activation,
+            result.settings.activation_last_layer,
+            result.settings.num_warmup,
+            result.settings.statistic,
+            result.settings.statistic_p,
+            result.settings.samples_per_mode,
+            result.settings.identifiable_modes,
+            result.settings.seed,
+            result.samples["parameters"].shape
         )
         csv_str += entry
 
