@@ -13,6 +13,7 @@ import hashlib
 from utils import settings
 from abc import ABC, abstractmethod
 from typing import Any
+from utils import statistics
 
 
 class AbstractExperimentSample(ABC):
@@ -30,9 +31,10 @@ class AbstractExperimentSample(ABC):
         raise NotImplementedError
     
     def _load_statistics(self):
+        ce = statistics.ChainEstimator(modes=self._settings.identifiable_modes, p=self._settings.statistic_p)
+        number_of_chains = ce.number_of_chains()
         return {
-            "num_samples_per_chain": 1,
-            "num_chains": 256
+            "num_chains": number_of_chains
         }
     
     def _load_dataset(self):
@@ -40,6 +42,8 @@ class AbstractExperimentSample(ABC):
             dataset = datasets.Izmailov(normalization=self._settings.dataset_normalization)
         elif self._settings.dataset == "sinusoidal":
             dataset = datasets.Sinusoidal(normalization=self._settings.dataset_normalization)
+        elif self._settings.dataset == "regression2d":
+            dataset = datasets.Regression2d(normalization=self._settings.dataset_normalization)
         else:
             pass
         
@@ -75,7 +79,7 @@ class AbstractExperimentSample(ABC):
         mcmc = numpyro.infer.MCMC(
             kernel,
             num_warmup=self._settings.num_warmup,
-            num_samples=self._sample_statistics["num_samples_per_chain"],
+            num_samples=self._settings.samples_per_chain,
             num_chains=1,
             progress_bar=False
         )

@@ -43,7 +43,7 @@ def main():
         "num_warmup",
         "statistic",
         "statistic_p",
-        "samples_per_mode",
+        "samples_per_chain",
         "identifiable_modes",
         "seed",
         "samples_parameters_shape"
@@ -64,7 +64,7 @@ def main():
             result.settings.num_warmup,
             result.settings.statistic,
             result.settings.statistic_p,
-            result.settings.samples_per_mode,
+            result.settings.samples_per_chain,
             result.settings.identifiable_modes,
             result.settings.seed,
             result.samples["parameters"].shape

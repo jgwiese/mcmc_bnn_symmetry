@@ -13,7 +13,7 @@ class SettingsExperimentSample:
     num_warmup: int
     statistic: str
     statistic_p: float
-    samples_per_mode: int
+    samples_per_chain: int
     identifiable_modes: int
     pool_size: int
     seed: int
