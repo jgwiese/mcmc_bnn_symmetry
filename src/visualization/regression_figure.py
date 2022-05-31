@@ -32,9 +32,9 @@ class RegressionFigure:
             ax.set_ylabel("y")
         elif len(dataset.conditional_indices) == 2:
             ax = self._figure.add_subplot(1, 1, 1, projection="3d")
-            ax.set_xlabel("x")
-            ax.set_ylabel("y")
-            ax.set_zlabel("z")
+            ax.set_xlabel(r"$x_1$")
+            ax.set_ylabel(r"$x_2$")
+            ax.set_zlabel("y")
         else:
             return 1
             

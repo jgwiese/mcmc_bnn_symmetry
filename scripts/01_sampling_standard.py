@@ -15,7 +15,7 @@ parser.add_argument("--output_path", type=str, default=global_settings.PATH_RESU
 parser.add_argument("--dataset", type=str, default="regression2d", help="one of: sinusoidal, izmailov, regression2d")
 parser.add_argument("--dataset_normalization", type=str, default="standardization")
 parser.add_argument("--hidden_layers", type=int, default=1)
-parser.add_argument("--hidden_neurons", type=int, default=4)
+parser.add_argument("--hidden_neurons", type=int, default=16)
 parser.add_argument("--activation", type=str, default="tanh")
 parser.add_argument("--activation_last_layer", type=str, default="none")
 parser.add_argument("--num_warmup", type=int, default=1024)
