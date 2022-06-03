@@ -76,12 +76,15 @@ class ResultSample:
         
         # cleanup the tmp_path files
         os.system(f"rm -rf {tmp_path}")
+
+        experiment = settings.SettingsExperimentSample(**result_json["settings"])
+        #experiment._samples = samples
         
         return ResultSample(
             identifier=result_json["identifier"],
             date=result_json["date"],
             experiment_type=result_json["experiment_type"],
-            settings=settings.SettingsExperimentSample(**result_json["settings"]),
+            settings=experiment,
             dataset=dataset,
             samples=samples
         )

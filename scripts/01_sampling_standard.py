@@ -12,9 +12,9 @@ parser = argparse.ArgumentParser(
     description="run experiment"
 )
 parser.add_argument("--output_path", type=str, default=global_settings.PATH_RESULTS)
-parser.add_argument("--dataset", type=str, default="regression2d", help="one of: sinusoidal, izmailov, regression2d")
+parser.add_argument("--dataset", type=str, default="izmailov", help="one of: sinusoidal, izmailov, regression2d")
 parser.add_argument("--dataset_normalization", type=str, default="standardization")
-parser.add_argument("--hidden_layers", type=int, default=1)
+parser.add_argument("--hidden_layers", type=int, default=2)
 parser.add_argument("--hidden_neurons", type=int, default=16)
 parser.add_argument("--activation", type=str, default="tanh")
 parser.add_argument("--activation_last_layer", type=str, default="none")
@@ -36,6 +36,8 @@ if __name__ == "__main__":
     if args.pool_size == 1:
         experiment.run()
     else:
+        print("model transformation parameters {}".format(experiment._model_transformation.parameters_size(experiment._dataset[0][0])))
+
         def run_parallel(key):
             experiment.sample(key)
             return experiment._mcmc.get_samples()
