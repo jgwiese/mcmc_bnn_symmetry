@@ -10,7 +10,7 @@ def loss_svm_unsupervised(params, inputs):
 
 
 class UnsupervisedSVMBinary:
-    def __init__(self, samples_subspace, rng_key=jax.random.PRNGKey(0)):
+    def __init__(self, samples_subspace, rng_key):
         self._samples_subspace = samples_subspace
         self._rng_key, rng_key_ = jax.random.split(rng_key)
         self._hyperplane_params = {

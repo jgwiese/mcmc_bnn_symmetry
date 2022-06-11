@@ -30,7 +30,7 @@ def load_result(file_name):
 
 def main():
     fn_results = [os.path.join(global_settings.PATH_RESULTS, file_name) for file_name in os.listdir(global_settings.PATH_RESULTS) if os.path.isfile(os.path.join(global_settings.PATH_RESULTS, file_name)) and file_name.split('.')[-1] == "gz"]
-    csv_str = ("{}; " * 15 + "{}\n").format(
+    csv_str = ("{} " * 15 + "{}\n").format(
         "identifier",
         "date",
         "result_type",
@@ -51,7 +51,7 @@ def main():
     
     for fn_result in fn_results:
         result = load_result(fn_result)
-        entry = ("{}; " * 15 + "{}\n").format(
+        entry = ("{} " * 15 + "{}\n").format(
             result.identifier,
             result.date,
             result.__class__.__name__,

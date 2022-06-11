@@ -4,6 +4,7 @@ import numpy as np
 from jax.tree_util import tree_map, tree_flatten, tree_unflatten
 from typing import Dict, Any, List
 from utils import equioutput, graphs
+import data
 
 
 class NeuronParametersIndices:
@@ -113,12 +114,12 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         subspace = jnp.stack(subspace, axis=1)
         return subspace
     
-    def remove_tanh_symmetries(self, layer: int):
+    def remove_tanh_symmetries(self, layer: int, rng_key = jax.random.PRNGKey(0)):
         layer_parameters_indices = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = self.hidden_layer_subspace(layer)
 
         # optimize hyperplane
-        svm = equioutput.UnsupervisedSVMBinary(subspace.reshape(-1, subspace.shape[-1]))
+        svm = equioutput.UnsupervisedSVMBinary(subspace.reshape(-1, subspace.shape[-1]), rng_key=rng_key)
         svm.optimize(2**5, 2**4, lr=0.1, report_at=1)
 
         # flip neurons
@@ -132,18 +133,18 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
     def remove_permutation_symmetries(self, layer: int, iterations: int):
         # TODO: Use more the structures from above!
         layer_parameters_indices  = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
-        subspace = self.hidden_layer_subspace(layer)
+        subspace = data.standardize(self.hidden_layer_subspace(layer))
         n, hidden, dim = subspace.shape
 
         # similarity matrix
-        if self._similarity_matrix is None:
-            self._similarity_matrix = graphs.distance_knn_graph_dense(
-                nodes=subspace.reshape((-1, dim)),
-                k=hidden * 3
-            )
-            sele = self._similarity_matrix > 0
-            self._similarity_matrix[sele] = np.power(self._similarity_matrix[sele], -1)
-        #self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=n * hidden)
+        self._similarity_matrix = graphs.distance_knn_graph_dense(
+            nodes=subspace.reshape((-1, dim)),
+            k=hidden * hidden
+            #k=6 * hidden
+        )
+        sele = self._similarity_matrix > 0
+        self._similarity_matrix[sele] = np.power(self._similarity_matrix[sele], -1)
+        #self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=hidden ** 2)
 
         # iterative greedy knn
         current_labels = np.stack([np.arange(hidden)] * n, axis=0)

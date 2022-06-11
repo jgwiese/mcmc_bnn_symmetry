@@ -24,7 +24,7 @@ class TriangleFigure:
         rows = cols = data_list[0].shape[-1]
         if self._figure is not None:
             self._figure.clf()
-        self._figure = plt.figure(figsize=(self._settings.ax_width * rows, self._settings.ax_height * cols))
+        self._figure = plt.figure(figsize=(self._settings.ax_width * rows, self._settings.ax_height * cols), tight_layout=True)
         if scale is None:
             scale = np.std(np.concatenate(data_list, axis=0)) * 3
         if self._settings.shift:
