@@ -114,7 +114,7 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         subspace = jnp.stack(subspace, axis=1)
         return subspace
     
-    def remove_tanh_symmetries(self, layer: int, rng_key = jax.random.PRNGKey(0)):
+    def remove_tanh_symmetries(self, layer: int, rng_key = jax.random.PRNGKey(3)):
         layer_parameters_indices = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = self.hidden_layer_subspace(layer)
 
@@ -130,21 +130,26 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             parameters_h[selection_behind_hyperplane] = -parameters_h[selection_behind_hyperplane]
             self._structured_sequential_samples_parameters.samples_parameters[:, neuron_indices.parameters_indices] = parameters_h
 
-    def remove_permutation_symmetries(self, layer: int, iterations: int):
+    def remove_permutation_symmetries(self, layer: int, iterations: int, similarity_matrix: str):
         # TODO: Use more the structures from above!
         layer_parameters_indices  = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = data.standardize(self.hidden_layer_subspace(layer))
         n, hidden, dim = subspace.shape
 
         # similarity matrix
-        self._similarity_matrix = graphs.distance_knn_graph_dense(
-            nodes=subspace.reshape((-1, dim)),
-            k=hidden * hidden
-            #k=6 * hidden
-        )
-        sele = self._similarity_matrix > 0
-        self._similarity_matrix[sele] = np.power(self._similarity_matrix[sele], -1)
-        #self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=hidden ** 2)
+        if similarity_matrix == "inverse":
+            self._similarity_matrix = graphs.distance_knn_graph_dense(
+                nodes=subspace.reshape((-1, dim)),
+                k=hidden * hidden
+                #k=6 * hidden
+            )
+            sele = self._similarity_matrix > 0
+            self._similarity_matrix[sele] = np.power(self._similarity_matrix[sele], -1)
+        elif similarity_matrix == "rbf":
+            self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=hidden * hidden)
+        else:
+            print("wrong similarity matrix string")
+            return
 
         # iterative greedy knn
         current_labels = np.stack([np.arange(hidden)] * n, axis=0)
@@ -173,6 +178,10 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         for i, labels in enumerate(current_labels):
             self._structured_sequential_samples_parameters.samples_parameters[i, old_indices.flatten()] = self._structured_sequential_samples_parameters.samples_parameters[i, old_indices[jnp.argsort(labels)].flatten()]
             #print(labels, old_indices[labels].flatten())
-
-            
-
+        
+    def remove_symmetries(self, similarity_matrix):
+        # ACTUALLY it does make sense to remove the tanh symmetries for all layers beforehand... because then the relabeling is more simple.
+        for l in range(self._number_of_layers):
+            layer = self._number_of_layers - l - 1
+            self.remove_tanh_symmetries(layer=layer)
+            self.remove_permutation_symmetries(layer=layer, iterations=128, similarity_matrix=similarity_matrix)

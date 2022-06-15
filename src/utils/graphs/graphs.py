@@ -37,9 +37,11 @@ def distance_knn_graph_dense(nodes, k=1):
     return adjacency_matrix
 
 
-def knn_graph(nodes, k=1, sigma=1.0):
+def knn_graph(nodes, k=None, sigma=1.0):
     """ Nodes have features: position vector coordinates. """
-    #print("nodes found:", nodes.shape)
+    n, dim = nodes.shape
+    if k is None:
+        k = n * dim
     k = int(k)
     adjacency_matrix = sp.lil_matrix((len(nodes), len(nodes)), dtype=jnp.float32)
     for i, node in enumerate(tqdm(nodes)):
@@ -52,9 +54,11 @@ def knn_graph(nodes, k=1, sigma=1.0):
     return adjacency_matrix.tocsr()
 
 
-def knn_graph_dense(nodes, k=1, sigma=1.0):
-    """ Nodes have features: position vector coordinates. """
-    #print("nodes found:", nodes.shape)
+def knn_graph_dense(nodes, k=None, sigma=1.0):
+    """ Nodes have features: position vector coordinates. """h
+    n, dim = nodes.shape
+    if k is None:
+        k = n * dim
     k = int(k)
     adjacency_matrix = np.zeros((len(nodes), len(nodes)), dtype=np.float32)
     for i, node in enumerate(tqdm(nodes)):
