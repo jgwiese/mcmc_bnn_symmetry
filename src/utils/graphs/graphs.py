@@ -55,7 +55,7 @@ def knn_graph(nodes, k=None, sigma=1.0):
 
 
 def knn_graph_dense(nodes, k=None, sigma=1.0):
-    """ Nodes have features: position vector coordinates. """h
+    """ Nodes have features: position vector coordinates. """
     n, dim = nodes.shape
     if k is None:
         k = n * dim
