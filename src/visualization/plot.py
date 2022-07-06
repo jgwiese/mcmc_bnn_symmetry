@@ -39,7 +39,7 @@ class Plot:
             x = np.linspace(self._settings.xlim[0] * self._scale, self._settings.xlim[1] * self._scale, 128)[:, np.newaxis]
             xx, yy = np.meshgrid(x, x)
             outputs = jax.vmap(transformation, in_axes=(None, 0))(np.stack([xx, yy], -1).reshape((-1, 2)), parameters).squeeze(-1).reshape((-1, 128, 128))
-            for output in outputs:
+            for output in tqdm(outputs):
                 self._ax.plot_surface(xx, yy, output, alpha=self._settings.alpha, color=color)
         else:
             return 1

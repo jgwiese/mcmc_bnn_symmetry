@@ -16,4 +16,4 @@ def full_pca(data):
 
 def spread(data):
     values, vectors = full_pca(data=data)
-    return values.sum()
+    return values.mean()

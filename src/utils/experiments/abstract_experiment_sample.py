@@ -91,6 +91,7 @@ class AbstractExperimentSample(ABC):
     
     def run(self):
         print("model transformation parameters {}".format(self._model_transformation.parameters_size(self._dataset[0][0])))
+        print("number of chains: {}".format(self._sample_statistics["num_chains"]))
         samples_parallel = []
         rng_key, *sub_keys = jax.random.split(jax.random.PRNGKey(self._settings.seed), self._sample_statistics["num_chains"] + 1)
         for i in tqdm(range(self._sample_statistics["num_chains"])):
@@ -105,8 +106,7 @@ class AbstractExperimentSample(ABC):
                     samples[key] = jnp.concatenate([samples[key], samples_run[key]])
         self._samples = samples
 
-    def save(self):
-        # gets an id
+    def result(self):
         identifier = hashlib.md5(self._date.encode("utf-8")).hexdigest()
         result = ResultSample(
             identifier=identifier,
@@ -116,4 +116,9 @@ class AbstractExperimentSample(ABC):
             dataset=self._dataset,
             samples=self._samples
         )
+        return result
+
+    def save(self):
+        # gets an id
+        result = self.result()
         return result.save()

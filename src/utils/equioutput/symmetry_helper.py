@@ -135,18 +135,19 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         layer_parameters_indices  = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = data.standardize(self.hidden_layer_subspace(layer))
         n, hidden, dim = subspace.shape
+        k = max(int(n * 0.25) * hidden, 1)
+        print(k)
 
         # similarity matrix
         if similarity_matrix == "inverse":
             self._similarity_matrix = graphs.distance_knn_graph_dense(
                 nodes=subspace.reshape((-1, dim)),
-                k=hidden * hidden
-                #k=6 * hidden
+                k=k
             )
             sele = self._similarity_matrix > 0
             self._similarity_matrix[sele] = np.power(self._similarity_matrix[sele], -1)
         elif similarity_matrix == "rbf":
-            self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=hidden * hidden)
+            self._similarity_matrix = graphs.knn_graph_dense(nodes=subspace.reshape((-1, dim)), k=k)
         else:
             print("wrong similarity matrix string")
             return
@@ -154,6 +155,7 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         # iterative greedy knn
         current_labels = np.stack([np.arange(hidden)] * n, axis=0)
         rng_key = jax.random.PRNGKey(0)
+        convergence_counter = 0
         for i in range(iterations):
             ig_knn = equioutput.IterativeGreedyKNN()
             
@@ -165,6 +167,12 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             )
 
             relabelings_total = jnp.logical_not(new_labels == current_labels).sum()
+            if relabelings_total == 0:
+                convergence_counter += 1
+            else:
+                convergence_counter = 0
+            if convergence_counter >= 8:
+                break
             print(i, relabelings_total)
             rng_key, rng_key_ = jax.random.split(rng_key)
             indices_subset = jax.random.permutation(rng_key_, jnp.arange(len(current_labels)))[:int(0.5 * len(current_labels))]
@@ -179,9 +187,9 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             self._structured_sequential_samples_parameters.samples_parameters[i, old_indices.flatten()] = self._structured_sequential_samples_parameters.samples_parameters[i, old_indices[jnp.argsort(labels)].flatten()]
             #print(labels, old_indices[labels].flatten())
         
-    def remove_symmetries(self, similarity_matrix):
+    def remove_symmetries(self, similarity_matrix, iterations):
         # ACTUALLY it does make sense to remove the tanh symmetries for all layers beforehand... because then the relabeling is more simple.
         for l in range(self._number_of_layers):
             layer = self._number_of_layers - l - 1
             self.remove_tanh_symmetries(layer=layer)
-            self.remove_permutation_symmetries(layer=layer, iterations=128, similarity_matrix=similarity_matrix)
+            self.remove_permutation_symmetries(layer=layer, iterations=iterations, similarity_matrix=similarity_matrix)

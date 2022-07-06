@@ -5,6 +5,7 @@ import numpyro.distributions as distributions
 from typing import Dict
 from flax.core import freeze
 from utils.conversion import flax_parameters_dict_to_jax_parameter_vector
+from tqdm import tqdm
 
 
 class Regression:
@@ -15,6 +16,19 @@ class Regression:
         self._outputs_likelihood = distributions.Normal
         self._dataset = dataset
         self._parameters_template = self._transformation.init(jax.random.PRNGKey(0), self._dataset[0][0])
+    
+    def log_posterior_parameters(self, parameters, std):
+        inputs = self._dataset.data[:, self._dataset.conditional_indices]
+        outputs = self._dataset.data[:, self._dataset.dependent_indices]
+        n, d = parameters.shape
+
+        parameters_prior = self._parameters_prior(jnp.zeros(d), jnp.ones(d))
+        means_all = jax.vmap(self._transformation.apply_from_vector, in_axes=(None, 0))(inputs, parameters).squeeze()
+        outputs_all = jnp.stack([outputs] * n).squeeze()
+        log_likelihood_all = self._outputs_likelihood(means_all, std).log_prob(outputs_all).sum(-1)
+        log_prior_all = parameters_prior.log_prob(parameters.reshape((-1, d))).sum(-1)
+        values = log_likelihood_all + log_prior_all
+        return jnp.array(values)
     
     def __call__(self):
         inputs = self._dataset.data[:, self._dataset.conditional_indices]

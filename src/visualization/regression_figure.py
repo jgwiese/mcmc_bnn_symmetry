@@ -3,7 +3,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import jax
-from tqdm import tqdm
 from data.datasets import ConditionalDataset
 from utils.settings import SettingsRegressionFigure
 from visualization import Scatter, Plot
@@ -49,9 +48,10 @@ class RegressionFigure:
                     transformation_plot._settings.aleatoric=False
                 color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
                 transformation_plot.plot(transformation, parameters, std, color=color, dataset=dataset)
-            for j, parameters in enumerate(parameters_list):
-                color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
-                transformation_plot.plot_means(transformation, parameters, color=color, dataset=dataset)
+            if len(dataset.conditional_indices) == 1:
+                for j, parameters in enumerate(parameters_list):
+                    color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
+                    transformation_plot.plot_means(transformation, parameters, color=color, dataset=dataset)
         return self._figure
     
     def save(self, path):
