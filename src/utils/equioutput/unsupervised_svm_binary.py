@@ -27,7 +27,7 @@ class UnsupervisedSVMBinary:
     def _lr_decay(self, lr):
         return 0.8 * lr
 
-    def optimize(self, epochs, batch_size, lr, report_at):
+    def optimize(self, epochs, batch_size, lr, report_at, verbose=True):
         loss_compiled = jax.jit(loss_svm_unsupervised)
         self._history[0] = [
             self._hyperplane_params["normal"],
@@ -50,7 +50,8 @@ class UnsupervisedSVMBinary:
             self._history[epoch] = [self._hyperplane_params["normal"], value]
             lr = self._lr_decay(lr)
 
-            if epoch % report_at == 0:
+            if epoch % report_at == 0 and verbose:
                 print(f'epoch: {epoch},  loss: {value}, normal l2 norm: {jnp.linalg.norm(self._hyperplane_params["normal"])}')
         
         self._current_epoch += epochs
+        return value

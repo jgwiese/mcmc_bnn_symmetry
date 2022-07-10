@@ -114,13 +114,25 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         subspace = jnp.stack(subspace, axis=1)
         return subspace
     
-    def remove_tanh_symmetries(self, layer: int, rng_key = jax.random.PRNGKey(3)):
+    def remove_tanh_symmetries(self, layer: int, tanh_planes: int, verbose=True):
         layer_parameters_indices = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = self.hidden_layer_subspace(layer)
 
         # optimize hyperplane
-        svm = equioutput.UnsupervisedSVMBinary(subspace.reshape(-1, subspace.shape[-1]), rng_key=rng_key)
-        svm.optimize(2**5, 2**4, lr=0.1, report_at=1)
+        svms = []
+        loss_values = []
+        rng_key = jax.random.PRNGKey(0)
+        for i in range(tanh_planes):
+            rng_key, rng_key_ = jax.random.split(rng_key, 2)
+            svm = equioutput.UnsupervisedSVMBinary(subspace.reshape(-1, subspace.shape[-1]), rng_key=rng_key)
+            loss_value = svm.optimize(epochs=2**5, batch_size=2**4, lr=0.1, report_at=1, verbose=verbose)
+            svms.append(svm)
+            loss_values.append(loss_value)
+        
+        # select best performing hyperplane.
+        i = jnp.argmin(jnp.array(loss_values))
+        svm = svms[i]
+        # 2.390, 0.75916797
 
         # flip neurons
         for h in layer_parameters_indices.neurons_parameters_indices.keys():
@@ -130,13 +142,11 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             parameters_h[selection_behind_hyperplane] = -parameters_h[selection_behind_hyperplane]
             self._structured_sequential_samples_parameters.samples_parameters[:, neuron_indices.parameters_indices] = parameters_h
 
-    def remove_permutation_symmetries(self, layer: int, iterations: int, similarity_matrix: str):
+    def remove_permutation_symmetries(self, layer: int, iterations: int, similarity_matrix: str, k: int, verbose=True):
         # TODO: Use more the structures from above!
         layer_parameters_indices  = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = data.standardize(self.hidden_layer_subspace(layer))
         n, hidden, dim = subspace.shape
-        k = max(int(n * 0.25) * hidden, 1)
-        print(k)
 
         # similarity matrix
         if similarity_matrix == "inverse":
@@ -173,7 +183,9 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
                 convergence_counter = 0
             if convergence_counter >= 8:
                 break
-            print(i, relabelings_total)
+
+            if verbose:
+                print(i, relabelings_total)
             rng_key, rng_key_ = jax.random.split(rng_key)
             indices_subset = jax.random.permutation(rng_key_, jnp.arange(len(current_labels)))[:int(0.5 * len(current_labels))]
             current_labels[indices_subset] = new_labels[indices_subset]
@@ -187,9 +199,9 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             self._structured_sequential_samples_parameters.samples_parameters[i, old_indices.flatten()] = self._structured_sequential_samples_parameters.samples_parameters[i, old_indices[jnp.argsort(labels)].flatten()]
             #print(labels, old_indices[labels].flatten())
         
-    def remove_symmetries(self, similarity_matrix, iterations):
+    def remove_symmetries(self, similarity_matrix, iterations, tanh_planes, k, verbose=True):
         # ACTUALLY it does make sense to remove the tanh symmetries for all layers beforehand... because then the relabeling is more simple.
         for l in range(self._number_of_layers):
             layer = self._number_of_layers - l - 1
-            self.remove_tanh_symmetries(layer=layer)
-            self.remove_permutation_symmetries(layer=layer, iterations=iterations, similarity_matrix=similarity_matrix)
+            self.remove_tanh_symmetries(layer=layer, tanh_planes=tanh_planes, verbose=verbose)
+            self.remove_permutation_symmetries(layer=layer, iterations=iterations, similarity_matrix=similarity_matrix, k=k, verbose=verbose)

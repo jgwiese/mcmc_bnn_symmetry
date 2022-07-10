@@ -14,3 +14,4 @@ class SettingsTriangleFigure:
     univariate: bool = True
     shift: bool = False
     cmap: matplotlib.colors.Colormap = matplotlib.cm.get_cmap("gist_rainbow") # "jet"
+    label_size: int = 10

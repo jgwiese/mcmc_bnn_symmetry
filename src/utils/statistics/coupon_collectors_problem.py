@@ -12,7 +12,7 @@ def expected_number_of_tickets_nonuniform(m, p):
     """ version for nonuniformly distributed tickets """
     assert m == p.shape[0], f"p needs {m} entries"
     p = p / p.sum()
-    print("normalized probabilities: {}".format(p))
+    #print("normalized probabilities: {}".format(p))
 
     total_sum = 0.0
     for q in range(m):

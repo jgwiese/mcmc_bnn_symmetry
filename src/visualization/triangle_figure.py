@@ -18,7 +18,7 @@ class TriangleFigure:
     def __del__(self):
         plt.close(self._figure)
     
-    def plot(self, data_list, scale=None, sizes=None, adjacency_matrix=None):
+    def plot(self, data_list, scale=None, sizes=None, adjacency_matrix=None, triangle="lower"):
         if sizes is not None:
             assert len(sizes) == len(data_list), "number of sizes needs to match the length of data_list"
         rows = cols = data_list[0].shape[-1]
@@ -34,10 +34,18 @@ class TriangleFigure:
         
         for row in tqdm(range(rows)):
             for col in range(cols):
-                if col > row:
-                    continue
-                elif col == row and not self._settings.univariate:
-                    continue
+                if triangle == "lower":
+                    if col > row:
+                        continue
+                    elif col == row and not self._settings.univariate:
+                        continue
+                elif triangle == "upper":
+                    if col < row:
+                        continue
+                    elif col == row and not self._settings.univariate:
+                        continue
+                else:
+                    pass
 
                 i = row * cols + col
                 ax = self._figure.add_subplot(cols, rows, i + 1)
@@ -66,14 +74,30 @@ class TriangleFigure:
                             plot.plot(dataset, color=color, size=current_size, adjacency_matrix=None)
                 
                 # labels
-                if row == rows - 1:
-                    ax.set_xlabel(f"${self._settings.prefix}_{{{col}}}$")
-                else:
-                    ax.set_xticklabels([])
-                if col == 0:
-                    ax.set_ylabel(f"${self._settings.prefix}_{{{row}}}$")
-                else:
-                    ax.set_yticklabels([])
+                if triangle == "lower":
+                    if row == rows - 1:
+                        ax.set_xlabel(f"${self._settings.prefix}_{{{col}}}$")
+                    else:
+                        ax.set_xticklabels([])
+                    if col == 0:
+                        ax.set_ylabel(f"${self._settings.prefix}_{{{row}}}$")
+                    else:
+                        ax.set_yticklabels([])
+                elif triangle == "upper":
+                    ax.yaxis.set_label_position("right")
+                    ax.yaxis.tick_right()
+                    ax.xaxis.set_label_position("top")
+                    ax.xaxis.tick_top()
+                    if row == 0:
+                        ax.set_xlabel(f"${self._settings.prefix}_{{{col}}}$")
+                    else:
+                        ax.set_xticklabels([])
+                    if col == cols - 1:
+                        ax.set_ylabel(f"${self._settings.prefix}_{{{row}}}$")
+                    else:
+                        ax.set_yticklabels([])
+                ax.yaxis.label.set_size(self._settings.label_size)
+                ax.xaxis.label.set_size(self._settings.label_size)
         
         return self._figure
 
