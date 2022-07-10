@@ -15,10 +15,10 @@ parser = argparse.ArgumentParser(
     description="run post hoc experiment"
 )
 parser.add_argument("--result_path", type=str)
-parser.add_argument("--tanh_planes", type=int, default=1)
-parser.add_argument("--k", type=int, default=1)
+parser.add_argument("--tanh_planes", type=int, default=2)
+parser.add_argument("--k", type=int, default=1024)
 parser.add_argument("--iterations", type=int, default=256)
-parser.add_argument("--verbose", type=bool, default=False)
+parser.add_argument("--verbose", type=bool, default=True)
 parser.add_argument("--pool_size", type=int, default=1)
 parser.add_argument("--similarity_matrix", type=str, default="rbf")
 
