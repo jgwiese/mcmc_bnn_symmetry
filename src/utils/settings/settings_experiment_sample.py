@@ -17,3 +17,4 @@ class SettingsExperimentSample:
     identifiable_modes: int
     pool_size: int
     seed: int
+    overwrite_chains: int = None

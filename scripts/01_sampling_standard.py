@@ -25,6 +25,7 @@ parser.add_argument("--samples_per_chain", type=int, default=1)
 parser.add_argument("--identifiable_modes", type=int, default=3)
 parser.add_argument("--pool_size", type=int, default=1)
 parser.add_argument("--seed", type=int, default=0)
+parser.add_argument("--overwrite_chains", type=int, default=None)
 
 
 if __name__ == "__main__":

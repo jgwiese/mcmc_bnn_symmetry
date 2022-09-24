@@ -12,3 +12,21 @@ PATH_FIGURES = os.path.join(PATH_THESIS, "figures")
 # paper related
 PATH_PAPER = os.path.join(home, "data/experiments/paper")
 PATH_PAPER_RESULTS = os.path.join(PATH_PAPER, "results")
+
+
+DATASET_NAMES_TOY = [
+    "sinusoidal",
+    "izmailov",
+    "regression2d"
+]
+
+DATASET_NAMES_BENCHMARK = [
+    "airfoil",
+    "boston",
+    "concrete",
+    "diabetes",
+    "energy",
+    "forest_fire",
+    "wine",
+    "yacht"
+]

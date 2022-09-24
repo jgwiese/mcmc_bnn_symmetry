@@ -17,4 +17,3 @@ class SettingsExperiment:
     identifiable_modes: int
     pool_size: int
     seed: int
-

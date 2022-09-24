@@ -19,18 +19,6 @@ import global_settings
 from utils import statistics
 
 
-dataset_names_benchmark = [
-    'airfoil',
-    'boston',
-    'concrete',
-    'diabetes',
-    'energy',
-    'forest_fire',
-    'wine',
-    'yacht'
-]
-
-
 class AbstractExperimentSample(ABC):
     def __init__(self, settings: settings.SettingsExperiment):
         self._date = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -46,30 +34,49 @@ class AbstractExperimentSample(ABC):
         raise NotImplementedError
     
     def _load_statistics(self):
-        ce = statistics.ChainEstimator(modes=self._settings.identifiable_modes, p=self._settings.statistic_p)
-        number_of_chains = ce.number_of_chains()
-        return {
-            "num_chains": number_of_chains
+        if self._settings.overwrite_chains is not None:
+            return {
+            "num_chains": self._settings.overwrite_chains
         }
+        else:
+            ce = statistics.ChainEstimator(modes=self._settings.identifiable_modes, p=self._settings.statistic_p)
+            number_of_chains = ce.number_of_chains()
+            return {
+                "num_chains": number_of_chains
+            }
     
-    def _load_dataset(self):
-        if self._settings.dataset == "izmailov":
-            dataset = datasets.Izmailov(normalization=self._settings.dataset_normalization)
-        elif self._settings.dataset == "sinusoidal":
-            dataset = datasets.Sinusoidal(normalization=self._settings.dataset_normalization)
-        elif self._settings.dataset == "regression2d":
-            dataset = datasets.Regression2d(normalization=self._settings.dataset_normalization)
-        elif self._settings.dataset in dataset_names_benchmark:
+    def _load_dataset(self): # this is a mess
+        # load split indices
+        if self._settings.dataset in global_settings.DATASET_NAMES_TOY:
+            with open(os.path.join(global_settings.PATH_DATASETS, "toy_dataset_indices_0.2.json"), 'r') as f:
+                indices = json.load(f)
+                split = {
+                    "data_train": indices[self._settings.dataset]["train"],
+                    "data_validate": [],
+                    "data_test": indices[self._settings.dataset]["validate"] # validate as test data, since we do not need validation data...
+                }
+        elif self._settings.dataset in global_settings.DATASET_NAMES_BENCHMARK:
             with open(os.path.join(os.path.join(global_settings.PATH_DATASETS, "benchmark_data"), "dataset_indices_0.2.json"), 'r') as f:
                 indices = json.load(f)
                 split = {
                     "data_train": indices[self._settings.dataset]["train"],
                     "data_validate": [],
-                    "data_test": indices[self._settings.dataset]["validate"]
+                    "data_test": indices[self._settings.dataset]["validate"] # validate as test data, since we do not need validation data...
                 }
+        else:
+            return None
+
+        # load dataset
+        if self._settings.dataset == "izmailov":
+            dataset = datasets.Izmailov(normalization=self._settings.dataset_normalization, split=split)
+        elif self._settings.dataset == "sinusoidal":
+            dataset = datasets.Sinusoidal(normalization=self._settings.dataset_normalization, split=split)
+        elif self._settings.dataset == "regression2d":
+            dataset = datasets.Regression2d(normalization=self._settings.dataset_normalization, split=split)
+        elif self._settings.dataset in global_settings.DATASET_NAMES_BENCHMARK:
             dataset = datasets.GenericBenchmark(dataset_name=self._settings.dataset, normalization=self._settings.dataset_normalization, split=split)
         else:
-            pass
+            return None
         
         return dataset
 
