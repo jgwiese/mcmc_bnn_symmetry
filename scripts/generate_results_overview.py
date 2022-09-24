@@ -4,6 +4,8 @@ import global_settings
 import tarfile
 import json
 
+TARGET_PATH = global_settings.PATH_PAPER_RESULTS
+
 
 def extract(file_name):
     tar = tarfile.open(file_name, "r:gz")
@@ -29,13 +31,15 @@ def load_result(file_name):
     return result
 
 def main():
-    fn_results = [os.path.join(global_settings.PATH_RESULTS, file_name) for file_name in os.listdir(global_settings.PATH_RESULTS) if os.path.isfile(os.path.join(global_settings.PATH_RESULTS, file_name)) and file_name.split('.')[-1] == "gz"]
+    fn_results = [os.path.join(TARGET_PATH, file_name) for file_name in os.listdir(TARGET_PATH) if os.path.isfile(os.path.join(TARGET_PATH, file_name)) and file_name.split('.')[-1] == "gz"]
+    print(fn_results)
     csv_str = ("{} " * 15 + "{}\n").format(
         "identifier",
         "date",
         "result_type",
         "experiment_type",
         "dataset",
+        "dataset_shape",
         "hidden_layers",
         "hidden_neurons",
         "activation",
@@ -50,13 +54,15 @@ def main():
     )
     
     for fn_result in fn_results:
+        print(fn_result)
         result = load_result(fn_result)
-        entry = ("{} " * 15 + "{}\n").format(
+        entry = ("{} " * 16 + "{}\n").format(
             result.identifier,
             result.date,
             result.__class__.__name__,
             result.experiment_type,
             result.settings.dataset,
+            result.dataset.shape,
             result.settings.hidden_layers,
             result.settings.hidden_neurons,
             result.settings.activation,
@@ -71,7 +77,7 @@ def main():
         )
         csv_str += entry
 
-    with open(os.path.join(global_settings.PATH_RESULTS, "summary.csv"), "w") as f:
+    with open(os.path.join(TARGET_PATH, "summary.csv"), "w") as f:
         f.write(csv_str)
 
 

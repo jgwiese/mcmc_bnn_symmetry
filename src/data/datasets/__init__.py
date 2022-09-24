@@ -5,6 +5,4 @@ from .izmailov import Izmailov
 from .sinusoidal import Sinusoidal
 from .regression2d import Regression2d
 from .irmae import IRMAE
-from .uci_wine_quality_red import UCIWineQualityRed
-from .uci_wine_quality_white import UCIWineQualityWhite
-from .uci_concrete import UCIConcrete
+from .generic_benchmark import GenericBenchmark

@@ -16,6 +16,9 @@ class ResultSample:
     experiment_type: str
     settings: settings.SettingsExperimentSample
     dataset: Any
+    indices_train: List
+    indices_validate: List
+    indices_test: List
     samples: Dict
 
     def _samples_file_names(self):
@@ -31,6 +34,9 @@ class ResultSample:
             "experiment_type": self.experiment_type,
             "settings": self.settings.__dict__,
             "dataset": "dataset.npy",
+            "indices_train": self.indices_train,
+            "indices_validate": self.indices_validate,
+            "indices_test": self.indices_test,
             "samples": self._samples_file_names(),
             "type": self.__class__.__name__,
         }
@@ -69,7 +75,7 @@ class ResultSample:
         with open(os.path.join(tmp_path, "result.json")) as f:
             result_json = json.load(f)
 
-        dataset = jnp.load(os.path.join(tmp_path, result_json["dataset"]))
+        dataset_data = jnp.load(os.path.join(tmp_path, result_json["dataset"]))
         samples = {}
         for key in result_json["samples"]:
             samples[key] = jnp.load(os.path.join(tmp_path, result_json["samples"][key]))
@@ -79,12 +85,27 @@ class ResultSample:
 
         experiment = settings.SettingsExperimentSample(**result_json["settings"])
         #experiment._samples = samples
-        
-        return ResultSample(
-            identifier=result_json["identifier"],
-            date=result_json["date"],
-            experiment_type=result_json["experiment_type"],
-            settings=experiment,
-            dataset=dataset,
-            samples=samples
-        )
+        if "indices_train" in result_json.keys():
+            return ResultSample(
+                identifier=result_json["identifier"],
+                date=result_json["date"],
+                experiment_type=result_json["experiment_type"],
+                settings=experiment,
+                dataset=dataset_data,
+                indices_train=result_json["indices_train"],
+                indices_validate=result_json["indices_validate"],
+                indices_test=result_json["indices_test"],
+                samples=samples
+            )
+        else:
+            return ResultSample(
+                identifier=result_json["identifier"],
+                date=result_json["date"],
+                experiment_type=result_json["experiment_type"],
+                settings=experiment,
+                dataset=dataset_data,
+                indices_train=list(range(len(dataset_data))),
+                indices_validate=[],
+                indices_test=[],
+                samples=samples
+            )

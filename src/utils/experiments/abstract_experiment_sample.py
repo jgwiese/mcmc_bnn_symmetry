@@ -13,7 +13,22 @@ import hashlib
 from utils import settings
 from abc import ABC, abstractmethod
 from typing import Any
+import os
+import json
+import global_settings
 from utils import statistics
+
+
+dataset_names_benchmark = [
+    'airfoil',
+    'boston',
+    'concrete',
+    'diabetes',
+    'energy',
+    'forest_fire',
+    'wine',
+    'yacht'
+]
 
 
 class AbstractExperimentSample(ABC):
@@ -44,6 +59,15 @@ class AbstractExperimentSample(ABC):
             dataset = datasets.Sinusoidal(normalization=self._settings.dataset_normalization)
         elif self._settings.dataset == "regression2d":
             dataset = datasets.Regression2d(normalization=self._settings.dataset_normalization)
+        elif self._settings.dataset in dataset_names_benchmark:
+            with open(os.path.join(os.path.join(global_settings.PATH_DATASETS, "benchmark_data"), "dataset_indices_0.2.json"), 'r') as f:
+                indices = json.load(f)
+                split = {
+                    "data_train": indices[self._settings.dataset]["train"],
+                    "data_validate": [],
+                    "data_test": indices[self._settings.dataset]["validate"]
+                }
+            dataset = datasets.GenericBenchmark(dataset_name=self._settings.dataset, normalization=self._settings.dataset_normalization, split=split)
         else:
             pass
         
@@ -81,7 +105,7 @@ class AbstractExperimentSample(ABC):
             num_warmup=self._settings.num_warmup,
             num_samples=self._settings.samples_per_chain,
             num_chains=1,
-            progress_bar=False
+            progress_bar=False # Change back
         )
         return kernel, mcmc
     
@@ -114,6 +138,9 @@ class AbstractExperimentSample(ABC):
             experiment_type=self.__class__.__name__,
             settings=self._settings,
             dataset=self._dataset,
+            indices_train=self._dataset.split["data_train"],
+            indices_validate=self._dataset.split["data_validate"],
+            indices_test=self._dataset.split["data_test"],
             samples=self._samples
         )
         return result

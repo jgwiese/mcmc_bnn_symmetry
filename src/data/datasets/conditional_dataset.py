@@ -2,10 +2,10 @@ from data.datasets import Dataset
 
 
 class ConditionalDataset(Dataset):
-    def __init__(self, data, normalization, conditional_indices, dependent_indices):
+    def __init__(self, data, normalization, conditional_indices, dependent_indices, split: dict = None):
         self._conditional_indices: List[int] = conditional_indices
         self._dependent_indices: List[int] = dependent_indices
-        super().__init__(data=data, normalization=normalization)
+        super().__init__(data=data, normalization=normalization, split=split)
     
     def __getitem__(self, index):
         sample = self._data[index]

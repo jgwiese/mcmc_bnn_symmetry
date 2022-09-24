@@ -18,8 +18,8 @@ class Regression:
         self._parameters_template = self._transformation.init(jax.random.PRNGKey(0), self._dataset[0][0])
     
     def log_posterior_parameters(self, parameters, std):
-        inputs = self._dataset.data[:, self._dataset.conditional_indices]
-        outputs = self._dataset.data[:, self._dataset.dependent_indices]
+        inputs = self._dataset.data_train[:, self._dataset.conditional_indices]
+        outputs = self._dataset.data_train[:, self._dataset.dependent_indices]
         n, d = parameters.shape
 
         parameters_prior = self._parameters_prior(jnp.zeros(d), jnp.ones(d))
@@ -29,10 +29,10 @@ class Regression:
         log_prior_all = parameters_prior.log_prob(parameters.reshape((-1, d))).sum(-1)
         values = log_likelihood_all + log_prior_all
         return jnp.array(values)
-    
+
     def __call__(self):
-        inputs = self._dataset.data[:, self._dataset.conditional_indices]
-        outputs = self._dataset.data[:, self._dataset.dependent_indices]
+        inputs = self._dataset.data_train[:, self._dataset.conditional_indices]
+        outputs = self._dataset.data_train[:, self._dataset.dependent_indices]
         
         parameters_dict = {"params": {}}
         for key in self._parameters_template["params"].keys():

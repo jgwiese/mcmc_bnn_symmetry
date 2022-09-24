@@ -11,11 +11,11 @@ import os
 parser = argparse.ArgumentParser(
     description="run experiment"
 )
-parser.add_argument("--output_path", type=str, default=global_settings.PATH_RESULTS)
-parser.add_argument("--dataset", type=str, default="regression2d", help="one of: sinusoidal, izmailov, regression2d")
+parser.add_argument("--output_path", type=str, default=global_settings.PATH_PAPER_RESULTS)
+parser.add_argument("--dataset", type=str, default="sinusoidal", help="one of: sinusoidal, izmailov, regression2d")
 parser.add_argument("--dataset_normalization", type=str, default="standardization")
 parser.add_argument("--hidden_layers", type=int, default=1)
-parser.add_argument("--hidden_neurons", type=int, default=16)
+parser.add_argument("--hidden_neurons", type=int, default=3)
 parser.add_argument("--activation", type=str, default="tanh")
 parser.add_argument("--activation_last_layer", type=str, default="none")
 parser.add_argument("--num_warmup", type=int, default=1024)
@@ -23,7 +23,7 @@ parser.add_argument("--statistic", type=str, default="reduced", help="full / red
 parser.add_argument("--statistic_p", type=float, default=0.99)
 parser.add_argument("--samples_per_chain", type=int, default=1)
 parser.add_argument("--identifiable_modes", type=int, default=3)
-parser.add_argument("--pool_size", type=int, default=8)
+parser.add_argument("--pool_size", type=int, default=1)
 parser.add_argument("--seed", type=int, default=0)
 
 

@@ -10,13 +10,15 @@ class Scatter:
         self._shift = shift
         self._settings = settings
     
-    def plot(self, dataset: datasets.ConditionalDataset, color=None, size=None, adjacency_matrix=None):
+    def plot(self, dataset: datasets.ConditionalDataset, color=None, size=None, adjacency_matrix=None, feature=0):
         if color is None:
             color = self._settings.color
         if size is None:
             size = self._settings.size
         
         conditional = dataset.data[:, dataset.conditional_indices]
+        if conditional.shape[-1] > 2:
+            conditional = conditional[:, feature:feature+1]
         dependent = dataset.data[:, dataset.dependent_indices]
         if conditional.shape[-1] == 1:
             self._ax.scatter(conditional, dependent, color=color, alpha=self._settings.alpha, s=size)

@@ -141,9 +141,13 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             selection_behind_hyperplane = parameters_h @ svm.normal < 0
             parameters_h[selection_behind_hyperplane] = -parameters_h[selection_behind_hyperplane]
             self._structured_sequential_samples_parameters.samples_parameters[:, neuron_indices.parameters_indices] = parameters_h
+        
+        return svm
 
     def remove_permutation_symmetries(self, layer: int, iterations: int, similarity_matrix: str, k: int, verbose=True):
         # TODO: Use more the structures from above!
+        self._history = {}
+
         layer_parameters_indices  = self._structured_sequential_samples_parameters.layers_parameters_indices[layer]
         subspace = data.standardize(self.hidden_layer_subspace(layer))
         n, hidden, dim = subspace.shape
@@ -189,6 +193,18 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
             rng_key, rng_key_ = jax.random.split(rng_key)
             indices_subset = jax.random.permutation(rng_key_, jnp.arange(len(current_labels)))[:int(0.5 * len(current_labels))]
             current_labels[indices_subset] = new_labels[indices_subset]
+
+            # start tmp
+            # relabeling for history
+            old_indices = []
+            for h in layer_parameters_indices.neurons_parameters_indices.keys():
+                old_indices.append(layer_parameters_indices.neurons_parameters_indices[h].parameters_indices)
+            old_indices = jnp.stack(old_indices, 0)
+            tmp = self._structured_sequential_samples_parameters.samples_parameters.copy()
+            for j, labels in enumerate(current_labels):
+                tmp[j, old_indices.flatten()] = tmp[j, old_indices[jnp.argsort(labels)].flatten()]
+            self._history[i] = tmp
+            # end tmp
         
         old_indices = []
         for h in layer_parameters_indices.neurons_parameters_indices.keys():
@@ -198,6 +214,7 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         for i, labels in enumerate(current_labels):
             self._structured_sequential_samples_parameters.samples_parameters[i, old_indices.flatten()] = self._structured_sequential_samples_parameters.samples_parameters[i, old_indices[jnp.argsort(labels)].flatten()]
             #print(labels, old_indices[labels].flatten())
+        return self._history
         
     def remove_symmetries(self, similarity_matrix, iterations, tanh_planes, k, verbose=True):
         # ACTUALLY it does make sense to remove the tanh symmetries for all layers beforehand... because then the relabeling is more simple.

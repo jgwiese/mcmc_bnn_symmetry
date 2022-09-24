@@ -8,7 +8,7 @@ def f(x):
 
 
 class Regression2d(ConditionalDataset):
-    def __init__(self, n=256, sigma_noise=0.1, normalization="standardization", rng_key=jax.random.PRNGKey(0)):
+    def __init__(self, n=256, sigma_noise=0.1, normalization="standardization", rng_key=jax.random.PRNGKey(0), split: dict = None):
         x_key, y_key = jax.random.split(rng_key)
         x = jax.random.uniform(x_key, shape=(n, 2)) * 4 - 2
         noise = jax.random.normal(y_key, shape=(n, 1)) * sigma_noise
@@ -18,6 +18,7 @@ class Regression2d(ConditionalDataset):
             data=data,
             normalization=normalization,
             conditional_indices=[0, 1],
-            dependent_indices=[2]
+            dependent_indices=[2],
+            split=split
         )
 
