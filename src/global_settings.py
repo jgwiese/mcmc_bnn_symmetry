@@ -22,7 +22,6 @@ DATASET_NAMES_TOY = [
 
 DATASET_NAMES_BENCHMARK = [
     "airfoil",
-    "boston",
     "concrete",
     "diabetes",
     "energy",

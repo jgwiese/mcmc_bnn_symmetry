@@ -3,7 +3,8 @@ import jax.numpy as jnp
 
 
 def loss_svm_unsupervised(params, inputs):
-    hyperplane = jnp.sqrt(params["normal"].T @ params["normal"])
+    #hyperplane = jnp.sqrt(params["normal"].T @ params["normal"])
+    hyperplane = 0.5 * (params["normal"].T @ params["normal"])
     constraints = jnp.sum(jnp.maximum(0.0, 1.0 - jnp.abs(inputs @ params["normal"])))
     c = 1.0
     return hyperplane + c * constraints
