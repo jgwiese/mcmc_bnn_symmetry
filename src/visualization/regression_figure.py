@@ -16,7 +16,7 @@ class RegressionFigure:
     def __del__(self):
         plt.close(self._figure)
     
-    def plot(self, dataset=None, transformation=None, parameters_list=None, std=None, scale=1.0, feature=0):
+    def plot(self, dataset=None, transformation=None, parameters_list=None, std=None, scale=1.0, feature=0, rasterized=False):
         if self._figure is not None:
             self._figure.clf()
         self._figure = plt.figure(
@@ -38,22 +38,25 @@ class RegressionFigure:
             ax = self._figure.add_subplot(1, 1, 1)
             ax.set_xlabel("x")
             ax.set_ylabel("y")
+        
+        ax.yaxis.label.set_size(self._settings.label_size)
+        ax.xaxis.label.set_size(self._settings.label_size)
             
         if dataset is not None:
             scale = np.std(dataset.data_train) * 3.0
             scatter_plot = Scatter(ax, scale=scale, settings=self._settings.settings_scatter)
-            scatter_plot.plot(dataset=dataset, feature=feature)
+            scatter_plot.plot(dataset=dataset, feature=feature, rasterized=rasterized)
         if not (transformation is None or parameters_list is None or std is None):
             transformation_plot = Plot(ax, scale=scale, settings=self._settings.settings_plot)
             for j, parameters in enumerate(parameters_list):
                 if j > 0:
                     transformation_plot._settings.aleatoric=False
                 color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
-                transformation_plot.plot(transformation, parameters, std, color=color, dataset=dataset, feature=feature)
+                transformation_plot.plot(transformation, parameters, std, color=color, dataset=dataset, feature=feature, rasterized=rasterized)
             if len(dataset.conditional_indices) == 1:
                 for j, parameters in enumerate(parameters_list):
                     color = self._settings.settings_plot.cmap(1.0 * j /len(parameters_list))
-                    transformation_plot.plot_means(transformation, parameters, color=color, dataset=dataset)
+                    transformation_plot.plot_means(transformation, parameters, color=color, dataset=dataset, rasterized=rasterized)
         return self._figure
     
     def save(self, path):

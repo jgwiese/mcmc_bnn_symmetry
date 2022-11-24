@@ -73,19 +73,37 @@ class PointEstimate:
                 nll_train = evaluation.nll_gaussian(y_true=outputs_train, y_pred=outputs_train_pred, sigma=jnp.exp(self._parameters["log_std"]))
                 nll_test = evaluation.nll_gaussian(y_true=outputs_test, y_pred=outputs_test_pred, sigma=jnp.exp(self._parameters["log_std"]))
                 self._history[epoch] = {}
-                self._history[epoch]["loss_train"] = loss_value
-                self._history[epoch]["loss_test"] = loss_value_test
-                self._history[epoch]["rmse_train"] = rmse_train
-                self._history[epoch]["rmse_test"] = rmse_test
-                self._history[epoch]["nll_train"] = nll_train
-                self._history[epoch]["nll_test"] = nll_test
+                self._history[epoch]["loss_train"] = loss_value.item()
+                self._history[epoch]["loss_test"] = loss_value_test.item()
+                self._history[epoch]["rmse_train"] = rmse_train.item()
+                self._history[epoch]["rmse_test"] = rmse_test.item()
+                self._history[epoch]["nll_train"] = nll_train.item()
+                self._history[epoch]["nll_test"] = nll_test.item()
 
                 # print output
                 print(f"epoch {epoch} loss_train: {loss_value} loss_test: {loss_value_test}")
+    def save(self, fn_name):
+        result_dictionary = {
+            "history": self._history,
+        }
+    
     
     @property
     def parameters(self):
         return self._parameters
+    
+    @property
+    def parameters_serializable(self):
+        parameters_vector = jax.tree_util.tree_reduce(lambda a, b: jnp.concatenate([a.flatten(), b.flatten()]), self._parameters["transformation"])[jnp.newaxis]
+        d = {
+            "transformation": np.array(parameters_vector).tolist(),
+            "log_std": np.array(self._parameters["log_std"]).tolist()
+        }
+        return d
+
+    @property
+    def transformation_parameters_vector(self):
+        return jax.tree_util.tree_reduce(lambda a, b: jnp.concatenate([a.flatten(), b.flatten()]), self._parameters["transformation"])[jnp.newaxis]
 
     @property
     def history(self):

@@ -7,3 +7,5 @@ from .speed_comparison_figure import SpeedComparisonFigure
 from .trace_figure import TraceFigure
 from .sequence_figure import SequenceFigure
 from .cut_figure import CutFigure
+
+from .paper_figure_bivariate import PaperFigureBivariate

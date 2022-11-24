@@ -11,6 +11,7 @@ class SettingsScatter:
     color: str = "black"
     alpha: float = 1.0
     size: float = 4.0
+    grid: bool = True
 
 """
 @dataclass

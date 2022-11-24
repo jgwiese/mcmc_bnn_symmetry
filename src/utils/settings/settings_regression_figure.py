@@ -8,3 +8,4 @@ class SettingsRegressionFigure:
     settings_plot: settings.SettingsPlot = settings.SettingsPlot()
     ax_width: float = 12.0
     ax_height: float = 4.0
+    label_size: float = None

@@ -10,7 +10,7 @@ class Scatter:
         self._shift = shift
         self._settings = settings
     
-    def plot(self, dataset: datasets.ConditionalDataset, color=None, size=None, adjacency_matrix=None, feature=0):
+    def plot(self, dataset: datasets.ConditionalDataset, color=None, size=None, adjacency_matrix=None, feature=0, rasterized=False):
         if color is None:
             color = self._settings.color
         if size is None:
@@ -21,12 +21,12 @@ class Scatter:
             conditional = conditional[:, feature:feature+1]
         dependent = dataset.data[:, dataset.dependent_indices]
         if conditional.shape[-1] == 1:
-            self._ax.scatter(conditional, dependent, color=color, alpha=self._settings.alpha, s=size)
+            self._ax.scatter(conditional, dependent, color=color, alpha=self._settings.alpha, s=size, rasterized=rasterized)
             self._ax.set_xlim(self._settings.xlim * self._scale + self._shift[0])
             self._ax.set_ylim(self._settings.ylim * self._scale + self._shift[1])
             self._ax.set_aspect(self._settings.aspect)
             self._ax.tick_params(direction="in")
-            self._ax.grid(visible=True)
+            self._ax.grid(visible=self._settings.grid)
 
             # TODO: not tested after refactoring.
             if adjacency_matrix is not None:
@@ -36,12 +36,12 @@ class Scatter:
                             if adjacency_matrix[i, j] > 0.0:
                                 line = np.stack([dataset.data[[i, j], 0], dataset.data[[i, j], 1]])
                                 self._ax.plot(
-                                    line[0], line[1], color="blue", alpha=0.9
+                                    line[0], line[1], color="blue", alpha=0.9, rasterized=rasterized
                                 )
                             if adjacency_matrix[i, j] < 0.0:
                                 line = np.stack([dataset.data[[i, j], 0], dataset.data[[i, j], 1]])
                                 self._ax.plot(
-                                    line[0], line[1], color="red", alpha=0.1
+                                    line[0], line[1], color="red", alpha=0.1, rasterized=rasterized
                                 )
         
         elif conditional.shape[-1] == 2:

@@ -7,3 +7,5 @@ from .settings_trace_figure import SettingsTraceFigure
 from .settings_triangle_figure import SettingsTriangleFigure
 from .settings_sequence_figure import SettingsSequenceFigure
 from .settings_experiment_sample import SettingsExperimentSample
+
+from .settings_paper_figure_bivariate import SettingsPaperFigureBivariate

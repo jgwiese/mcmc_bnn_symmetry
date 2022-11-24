@@ -18,7 +18,7 @@ class TriangleFigure:
     def __del__(self):
         plt.close(self._figure)
     
-    def plot(self, data_list, scale=None, sizes=None, adjacency_matrix=None, triangle="lower"):
+    def plot(self, data_list, scale=None, sizes=None, adjacency_matrix=None, triangle="lower", textsize=None, rasterized=False):
         if sizes is not None:
             assert len(sizes) == len(data_list), "number of sizes needs to match the length of data_list"
         rows = cols = data_list[0].shape[-1]
@@ -69,9 +69,9 @@ class TriangleFigure:
                         if adjacency_matrix is not None and j == 0:
                             if len(data_list) > 1:
                                 current_size = 0.0
-                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=adjacency_matrix)
+                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=adjacency_matrix, rasterized=rasterized)
                         else:
-                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=None)
+                            plot.plot(dataset, color=color, size=current_size, adjacency_matrix=None, rasterized=rasterized)
                 
                 # labels
                 if triangle == "lower":
@@ -96,8 +96,16 @@ class TriangleFigure:
                         ax.set_ylabel(f"${self._settings.prefix}_{{{row}}}$")
                     else:
                         ax.set_yticklabels([])
-                ax.yaxis.label.set_size(self._settings.label_size)
-                ax.xaxis.label.set_size(self._settings.label_size)
+                
+                if textsize is not None:
+                    ax.yaxis.label.set_size(textsize)
+                    ax.xaxis.label.set_size(textsize)
+                    ax.tick_params(axis='both', which='major', labelsize=textsize - 2)
+                    #ax.set_xticklabels(, rotation=45, ha='right')
+                    plt.xticks(rotation=-45)
+                else:
+                    ax.yaxis.label.set_size(self._settings.label_size)
+                    ax.xaxis.label.set_size(self._settings.label_size)
         
         return self._figure
 
