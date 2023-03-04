@@ -18,7 +18,7 @@ class PaperFigureBivariate:
     def __del__(self):
         plt.close(self._figure)
     
-    def plot(self, data_list, scatter_index_0, scatter_index_1, univariate_index, labels, scale=None, rasterized=False, univariate=False, textsize=None, y_axis=True):
+    def plot(self, data_list, scatter_index_0, scatter_index_1, univariate_index, labels, scale=None, rasterized=False, univariate=False, textsize=None, y_axis=True, ticks_side="left"):
         rows = 1
         cols = 1
         if self._figure is not None:
@@ -61,10 +61,11 @@ class PaperFigureBivariate:
             if not y_axis:
                 ax.set_yticklabels([])
                 ax.set_ylabel("")
-            
         else:
             ax.yaxis.label.set_size(self._settings.label_size)
             ax.xaxis.label.set_size(self._settings.label_size)
+        if ticks_side == "right":
+            ax.yaxis.tick_right()
         return self._figure
 
     def save(self, path):

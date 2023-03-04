@@ -16,7 +16,7 @@ class RegressionFigure:
     def __del__(self):
         plt.close(self._figure)
     
-    def plot(self, dataset=None, transformation=None, parameters_list=None, std=None, scale=1.0, feature=0, rasterized=False):
+    def plot(self, dataset=None, transformation=None, parameters_list=None, std=None, scale=1.0, feature=0, rasterized=False, textsize=None):
         if self._figure is not None:
             self._figure.clf()
         self._figure = plt.figure(
@@ -38,10 +38,16 @@ class RegressionFigure:
             ax = self._figure.add_subplot(1, 1, 1)
             ax.set_xlabel("x")
             ax.set_ylabel("y")
+        if textsize is not None:
+            ax.yaxis.label.set_size(textsize)
+            ax.xaxis.label.set_size(textsize)
+            ax.tick_params(axis='both', which='major', labelsize=textsize - 2)
+            #ax.set_xticklabels(, rotation=45, ha='right')
+            #plt.xticks(rotation=-45)
+        else:
+            ax.yaxis.label.set_size(self._settings.label_size)
+            ax.xaxis.label.set_size(self._settings.label_size)
         
-        ax.yaxis.label.set_size(self._settings.label_size)
-        ax.xaxis.label.set_size(self._settings.label_size)
-            
         if dataset is not None:
             scale = np.std(dataset.data_train) * 3.0
             scatter_plot = Scatter(ax, scale=scale, settings=self._settings.settings_scatter)

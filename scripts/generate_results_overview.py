@@ -4,7 +4,8 @@ import global_settings
 import tarfile
 import json
 
-TARGET_PATH = global_settings.PATH_PAPER_RESULTS
+#TARGET_PATH = global_settings.PATH_PAPER_RESULTS
+TARGET_PATH = "/home/gw/downloads/new_experiments"
 
 
 def extract(file_name):
@@ -33,7 +34,7 @@ def load_result(file_name):
 def main():
     fn_results = [os.path.join(TARGET_PATH, file_name) for file_name in os.listdir(TARGET_PATH) if os.path.isfile(os.path.join(TARGET_PATH, file_name)) and file_name.split('.')[-1] == "gz"]
     print(fn_results)
-    csv_str = ("{} " * 15 + "{}\n").format(
+    csv_str = ("{} " * 16 + "{}\n").format(
         "identifier",
         "date",
         "result_type",
