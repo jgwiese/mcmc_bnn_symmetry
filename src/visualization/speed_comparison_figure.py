@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from utils import settings
+from visualization import settings
 
 
 class SpeedComparisonFigure:

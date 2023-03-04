@@ -1,6 +1,6 @@
 import models
-from utils import settings
 from utils import experiments
+from utils.experiments import settings
 
 
 class ExperimentSampleConstrained(experiments.AbstractExperimentSample):

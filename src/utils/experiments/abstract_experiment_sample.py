@@ -10,7 +10,7 @@ import jax.numpy as jnp
 from utils.results import ResultSample
 import datetime
 import hashlib
-from utils import settings
+from utils.experiments import settings
 from abc import ABC, abstractmethod
 from typing import Any
 import os

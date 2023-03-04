@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from utils import settings
+from visualization import settings
 import matplotlib
 import numpy as np
 
 
 @dataclass
-class SettingsPaperFigureBivariate:
+class SettingsTriangleFigure:
     settings_plot: settings.SettingsPlot = settings.SettingsPlot()
     settings_scatter: settings.SettingsScatter = settings.SettingsScatter()
     ax_width: float = np.sqrt(2.0)

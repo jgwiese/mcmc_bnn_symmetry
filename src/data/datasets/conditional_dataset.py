@@ -1,7 +1,7 @@
-from data.datasets import Dataset
+from data.datasets import AbstractDataset
 
 
-class ConditionalDataset(Dataset):
+class ConditionalDataset(AbstractDataset):
     def __init__(self, data, normalization, conditional_indices, dependent_indices, split: dict = None):
         self._conditional_indices: List[int] = conditional_indices
         self._dependent_indices: List[int] = dependent_indices

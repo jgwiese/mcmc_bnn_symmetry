@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import jax
 from data.datasets import ConditionalDataset
-from utils.settings import SettingsRegressionFigure
+from visualization import settings
 from visualization import Scatter, Plot
 
 
 class RegressionFigure:
-    def __init__(self, settings: SettingsRegressionFigure = SettingsRegressionFigure()):
+    def __init__(self, settings: settings.SettingsRegressionFigure = settings.SettingsRegressionFigure()):
         self._settings = settings
         self._figure = None
     

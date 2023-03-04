@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from typing import List, Any
 from tqdm import tqdm
 import jax.numpy as jnp
-from utils import settings
+from visualization import settings
 
 
 class TraceFigure:

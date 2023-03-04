@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from utils import settings
+import numpy as np
+from visualization import settings
 
 
 @dataclass
-class SettingsRegressionFigure:
+class SettingsSequenceFigure:
     settings_scatter: settings.SettingsScatter = settings.SettingsScatter()
     settings_plot: settings.SettingsPlot = settings.SettingsPlot()
-    ax_width: float = 12.0
+    ax_width: float = 4.0
     ax_height: float = 4.0
-    label_size: float = None
+    cols: int = 4

@@ -28,3 +28,4 @@ class GenericBenchmark(ConditionalDataset):
     @property
     def dataset_name(self):
         return self._dataset_name
+

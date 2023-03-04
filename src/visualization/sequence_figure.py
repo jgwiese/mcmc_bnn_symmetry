@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-from utils import settings
+from visualization import settings
 import numpy as np
 from visualization import Scatter, Plot
 
