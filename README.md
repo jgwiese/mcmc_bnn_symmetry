@@ -1,2 +1,3 @@
-# master thesis code repository
-The code base for the paper based on my master thesis.
+# Towards Efficient Posterior Sampling in Deep Neural Networks by Exploiting Symmetry
+This is the official repository for the publication "Towards Efficient Posterior Sampling in Deep Neural Networks by Exploiting Symmetry".
+
