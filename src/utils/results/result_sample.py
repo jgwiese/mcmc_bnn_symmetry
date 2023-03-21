@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from utils import settings
+from utils.experiments import settings
 from typing import List, Any, Dict
 import os
 import tarfile
