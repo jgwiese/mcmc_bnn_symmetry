@@ -1,4 +1,4 @@
-from utils import settings
+from visualization import settings
 import seaborn as sns
 
 

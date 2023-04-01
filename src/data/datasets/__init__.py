@@ -1,8 +1,7 @@
-from .dataset import Dataset
+from .abstract_dataset import AbstractDataset
 from .conditional_dataset import ConditionalDataset
-from .generative import Generative
+from .generic_benchmark import GenericBenchmark
 from .izmailov import Izmailov
 from .sinusoidal import Sinusoidal
 from .regression2d import Regression2d
-from .irmae import IRMAE
-from .generic_benchmark import GenericBenchmark
+

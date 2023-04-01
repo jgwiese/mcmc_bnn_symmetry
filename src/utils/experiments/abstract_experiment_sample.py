@@ -1,4 +1,5 @@
 from data import datasets
+import utils.results as results
 import models
 import transformations
 import numpyro
@@ -7,10 +8,9 @@ import transformations
 import jax
 from tqdm import tqdm
 import jax.numpy as jnp
-from utils.results import ResultSample
 import datetime
 import hashlib
-from utils import settings
+from utils.experiments import settings
 from abc import ABC, abstractmethod
 from typing import Any
 import os
@@ -28,6 +28,7 @@ class AbstractExperimentSample(ABC):
         self._model = self._load_model()
         self._sample_statistics = self._load_statistics()
         self._kernel, self._mcmc = self._load_sampler()
+        self._result = None
     
     @abstractmethod
     def _load_model(self):
@@ -106,13 +107,14 @@ class AbstractExperimentSample(ABC):
         return transformations.Sequential(layers)
 
     def _load_sampler(self):
+        """ TODO: I am not even using my own mcmc method anymore! """
         kernel = numpyro.infer.NUTS(self._model)
         mcmc = numpyro.infer.MCMC(
             kernel,
             num_warmup=self._settings.num_warmup,
             num_samples=self._settings.samples_per_chain,
             num_chains=1,
-            progress_bar=False # Change back
+            progress_bar=False
         )
         return kernel, mcmc
     
@@ -121,6 +123,7 @@ class AbstractExperimentSample(ABC):
         return self._mcmc.get_samples()
     
     def run(self):
+        """ TODO: add docstring. also: this is only for sequential runs. """
         print("model transformation parameters {}".format(self._model_transformation.parameters_size(self._dataset[0][0])))
         print("number of chains: {}".format(self._sample_statistics["num_chains"]))
         samples_parallel = []
@@ -138,21 +141,24 @@ class AbstractExperimentSample(ABC):
         self._samples = samples
 
     def result(self):
-        identifier = hashlib.md5(self._date.encode("utf-8")).hexdigest()
-        result = ResultSample(
-            identifier=identifier,
-            date=self._date,
-            experiment_type=self.__class__.__name__,
-            settings=self._settings,
-            dataset=self._dataset,
-            indices_train=self._dataset.split["data_train"],
-            indices_validate=self._dataset.split["data_validate"],
-            indices_test=self._dataset.split["data_test"],
-            samples=self._samples
-        )
-        return result
+        if self._result is None:
+            identifier = hashlib.md5(self._date.encode("utf-8")).hexdigest()
+            self._result = results.ResultSample(
+                identifier=identifier,
+                date=self._date,
+                experiment_type=self.__class__.__name__,
+                settings=self._settings,
+                dataset=self._dataset,
+                indices_train=self._dataset.split["data_train"],
+                indices_validate=self._dataset.split["data_validate"],
+                indices_test=self._dataset.split["data_test"],
+                samples=self._samples
+            )
+        return self._result
 
     def save(self):
         # gets an id
-        result = self.result()
-        return result.save()
+        if self._result is None:
+            self.result()
+        return self._result.save()
+

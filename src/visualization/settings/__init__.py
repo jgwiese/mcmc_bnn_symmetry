@@ -1,0 +1,7 @@
+from .settings_plot import SettingsPlot
+from .settings_scatter import SettingsScatter
+from .settings_regression_figure import SettingsRegressionFigure
+from .settings_triangle_figure import SettingsTriangleFigure
+from .settings_cardinality_figure import SettingsCardinalityFigure
+from .settings_paper_figure_bivariate import SettingsPaperFigureBivariate
+

@@ -10,7 +10,7 @@ split_default = {
     "data_test": []
 }
 
-class Dataset(ABC):
+class AbstractDataset(ABC):
     def __init__(self, data, normalization, split: dict = None):
         super().__init__()
         self._data = data

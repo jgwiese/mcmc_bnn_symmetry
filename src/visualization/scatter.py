@@ -1,4 +1,4 @@
-from utils import settings
+from visualization import settings
 from data import datasets
 import numpy as np
 
