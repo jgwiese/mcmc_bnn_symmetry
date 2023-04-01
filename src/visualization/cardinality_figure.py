@@ -25,9 +25,9 @@ class CardinalityFigure():
         plt.xticks(fontsize=self._settings.textsize - 2)
         plt.yticks(fontsize=self._settings.textsize - 2)
         
-        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 1], linestyle="dashed", label=r"$\mathcal{T}_l$")
-        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 0], linestyle="dashed", label=r"$\mathcal{P}_l$")
-        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 2], linestyle="solid", label=r"$\mathcal{E}_l$")
+        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 1], linestyle="dashed", label=r"$\mathcal{T}$")
+        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 0], linestyle="dashed", label=r"$\mathcal{P}$")
+        ax.plot(jnp.arange(len(cardinalities)), cardinalities[:, 2], linestyle="solid", label=r"$\mathcal{E}$")
         ax.legend(prop={"size": self._settings.textsize})
 
         return self._figure
