@@ -1,20 +1,14 @@
 from dataclasses import dataclass
+import utils.experiments.settings as settings
 
 
 @dataclass
-class SettingsExperimentSample:
-    output_path: str
-    dataset: str
-    dataset_normalization: str
-    hidden_layers: int
-    hidden_neurons: int
-    activation: str
-    activation_last_layer: str
+class SettingsExperimentSample(settings.SettingsExperiment):
     num_warmup: int
     statistic: str
     statistic_p: float
-    samples_per_chain: int
     identifiable_modes: int
-    pool_size: int
+    samples_per_chain: int
     seed: int
     overwrite_chains: int = None
+
