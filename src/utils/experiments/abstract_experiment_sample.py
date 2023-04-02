@@ -140,6 +140,10 @@ class AbstractExperimentSample(ABC):
                     samples[key] = jnp.concatenate([samples[key], samples_run[key]])
         self._samples = samples
 
+    def set_result(self, result):
+        self._result = result
+
+    @property
     def result(self):
         if self._result is None:
             identifier = hashlib.md5(self._date.encode("utf-8")).hexdigest()

@@ -31,3 +31,4 @@ def markov_inequality(expected_value, p):
     assert 0.0 <= p and p <= 1.0
     c = 1.0 / (1.0 - p)
     return c * expected_value
+
