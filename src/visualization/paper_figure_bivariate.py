@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
-from utils import settings
+from visualization import settings
 from visualization import Scatter, UnivariateKDEPlot
 from data import datasets
 

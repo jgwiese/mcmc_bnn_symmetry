@@ -1,11 +1,10 @@
 import os
-from utils import results
+import utils.results as results
 import global_settings
 import tarfile
 import json
 
-#TARGET_PATH = global_settings.PATH_PAPER_RESULTS
-TARGET_PATH = "/home/gw/downloads/new_experiments"
+TARGET_PATH = global_settings.PATH_RESULTS
 
 
 def extract(file_name):

@@ -1,6 +1,4 @@
-import numpy
 import jax.numpy as jnp
-import pandas
 import os
 import global_settings
 from data.datasets import ConditionalDataset
@@ -28,3 +26,4 @@ class GenericBenchmark(ConditionalDataset):
     @property
     def dataset_name(self):
         return self._dataset_name
+

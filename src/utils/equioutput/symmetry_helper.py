@@ -125,14 +125,13 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         for i in range(tanh_planes):
             rng_key, rng_key_ = jax.random.split(rng_key, 2)
             svm = equioutput.UnsupervisedSVMBinary(subspace.reshape(-1, subspace.shape[-1]), rng_key=rng_key)
-            loss_value = svm.optimize(epochs=2**5, batch_size=2**4, lr=0.1, report_at=1, verbose=verbose)
+            loss_value = svm.optimize(epochs=2**5, batch_size=2**4, lr=0.1, report_at=8, verbose=verbose)
             svms.append(svm)
             loss_values.append(loss_value)
         
         # select best performing hyperplane.
         i = jnp.argmin(jnp.array(loss_values))
         svm = svms[i]
-        # 2.390, 0.75916797
 
         # flip neurons
         for h in layer_parameters_indices.neurons_parameters_indices.keys():
@@ -213,12 +212,11 @@ class SymmetryHelper: # TODO: SymmetryRemoverCustom?
         
         for i, labels in enumerate(current_labels):
             self._structured_sequential_samples_parameters.samples_parameters[i, old_indices.flatten()] = self._structured_sequential_samples_parameters.samples_parameters[i, old_indices[jnp.argsort(labels)].flatten()]
-            #print(labels, old_indices[labels].flatten())
         return self._history
         
     def remove_symmetries(self, similarity_matrix, iterations, tanh_planes, k, verbose=True):
-        # ACTUALLY it does make sense to remove the tanh symmetries for all layers beforehand... because then the relabeling is more simple.
         for l in range(self._number_of_layers):
             layer = self._number_of_layers - l - 1
             self.remove_tanh_symmetries(layer=layer, tanh_planes=tanh_planes, verbose=verbose)
             self.remove_permutation_symmetries(layer=layer, iterations=iterations, similarity_matrix=similarity_matrix, k=k, verbose=verbose)
+

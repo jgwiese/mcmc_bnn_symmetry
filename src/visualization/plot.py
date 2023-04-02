@@ -1,4 +1,4 @@
-from utils import settings
+from visualization import settings
 import numpy as np
 import jax
 import jax.numpy as jnp
