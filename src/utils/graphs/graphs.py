@@ -1,4 +1,3 @@
-import jax
 import jax.numpy as jnp
 import scipy.sparse as sp
 import numpy as np
@@ -117,5 +116,13 @@ def spectrum(l, k, normalized=True):
     if normalized:
         eigenvalues = eigenvalues / eigenvalues.sum()
         eigenvectors = eigenvectors / lengths
+    return eigenvalues, eigenvectors
+
+
+def get_knn_sc_eigenvalues(samples, n=256):
+    a = knn_graph(nodes=samples, k=4)
+    d = degree_matrix(a)
+    l = laplacian(a=a, d=d, normalized=True)
+    eigenvalues, eigenvectors = spectrum(l=l, k=n, normalized=False)
     return eigenvalues, eigenvectors
 
