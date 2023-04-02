@@ -4,4 +4,6 @@ from .settings_regression_figure import SettingsRegressionFigure
 from .settings_triangle_figure import SettingsTriangleFigure
 from .settings_cardinality_figure import SettingsCardinalityFigure
 from .settings_paper_figure_bivariate import SettingsPaperFigureBivariate
+from .settings_kl_divergence_ppd_figure import SettingsKLDivergencePPDFigure
+from .settings_ppd_history_figure import SettingsPPDHistoryFigure
 

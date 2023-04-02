@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 import math
 
-
+"""
 def rmse(y_true, y_pred):
     return jnp.power(jnp.power(y_true - y_pred, 2).mean(), 0.5)
 
@@ -12,4 +12,4 @@ def nll_gaussian(y_true, y_pred, sigma):
 
 def lppd():
     pass
-
+"""
