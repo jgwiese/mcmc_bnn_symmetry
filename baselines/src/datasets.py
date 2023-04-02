@@ -24,7 +24,6 @@ DATASETS_BENCHMARK: Final[List] = [
     'diabetes',
     'energy',
     'forest_fire',
-    'wine',
     'yacht',
 ]
 DATASETS_TOY: Final[List] = ['izmailov', 'regression2d', 'sinusoidal']
